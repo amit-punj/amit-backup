@@ -1,0 +1,12 @@
+
+
+Options -Indexes
+RewriteEngine on
+RewriteBase /properties/
+
+<IfModule mod_rewrite.c>
+    #RewriteRule ^(blog)($|/) - [L]
+	#RewriteRule ^admin(/.+)?$ backend/web/$1 [L,PT]
+	RewriteRule ^(.+)?$ public/$1
+</IfModule>
+Options -Indexes

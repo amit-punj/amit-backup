@@ -1,0 +1,166 @@
+[09-Sep-2019 05:17:29 Etc/GMT] PHP Fatal error:  Uncaught Exception: Request error for API call: Operation timed out after 9999 milliseconds with 0 bytes received in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:2100
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(2052): Codebird\Codebird->_callApiCurl('POST', 'statuses/update...', 'statuses/update...', '---------------...', true, false)
+#1 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(846): Codebird\Codebird->_callApi('POST', 'statuses/update...', 'statuses/update...', Array, true, false)
+#2 /home/visiozuf/public_html/twitter/index.php(48): Codebird\Codebird->__call('statuses_update...', Array)
+#3 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 2100
+[09-Sep-2019 05:18:57 Etc/GMT] PHP Fatal error:  Uncaught Exception: Request error for API call: Operation timed out after 9999 milliseconds with 0 bytes received in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:2100
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(2052): Codebird\Codebird->_callApiCurl('POST', 'statuses/update...', 'statuses/update...', '---------------...', true, false)
+#1 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(846): Codebird\Codebird->_callApi('POST', 'statuses/update...', 'statuses/update...', Array, true, false)
+#2 /home/visiozuf/public_html/twitter/index.php(48): Codebird\Codebird->__call('statuses_update...', Array)
+#3 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 2100
+[09-Sep-2019 06:19:05 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:07 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:07 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:07 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:08 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:08 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:19:08 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:52:34 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:52:37 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:53:37 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(70): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:54:39 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(36): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:54:40 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(36): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:54:41 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(36): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 06:54:47 Etc/GMT] PHP Fatal error:  Uncaught Exception: Can't find HTTP method to use for "upload". in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php:1719
+Stack trace:
+#0 /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php(837): Codebird\Codebird->_detectMethod('upload', Array)
+#1 /home/visiozuf/public_html/twitter/index.php(36): Codebird\Codebird->__call('upload', Array)
+#2 {main}
+  thrown in /home/visiozuf/public_html/twitter/codebird-php-develop/src/codebird.php on line 1719
+[09-Sep-2019 07:12:18 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:19 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:20 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:20 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:21 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:21 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:21 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:22 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:23 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:23 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:24 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:36 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:13:53 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:14:12 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:14:14 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:14:15 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51
+[09-Sep-2019 07:14:17 Etc/GMT] PHP Fatal error:  Uncaught Error: Call to undefined function wp_get_attachment_image_src() in /home/visiozuf/public_html/twitter/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home/visiozuf/public_html/twitter/index.php on line 51

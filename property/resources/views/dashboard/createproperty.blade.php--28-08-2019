@@ -1,0 +1,260 @@
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner')
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    @include('dashboard.sidebar')
+                </div>
+                <div class="col-md-9">
+                    @if(session()->has('message'))
+                        <div class="alert alert-success">
+                            {{ session()->get('message') }}
+                        </div>
+                    @endif
+                    <div class="profile-page-title">Create Entity</div>                                                 
+                        <!------------------>
+                    <div class="create-property-page">
+                        <div class="row justify-content-center">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                <div class="card-body">
+                                    <form method="POST" action="{{ url('/create-property') }}" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="collapse-group">
+                                           <!--  <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#general_info">General Information</span> -->
+                                            <div id="general_info" class="collapse in">
+                                                <input type="hidden" name="user_id" value="{{ Auth::user()->id }}"> 
+                                                <div class="form-group row">
+                                                    <label for="title" class="col-md-4 col-form-label text-md-right">{{ __('Entity Type') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <select id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="type" value="{{ old('type') }}" required autocomplete="type">
+                                                            <option value="building">Building</option>
+                                                            <option value="house">House</option>
+                                                        </select>
+
+                                                        @error('title')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>   
+                                                <div class="form-group row">
+                                                    <label for="title" class="col-md-4 col-form-label text-md-right">{{ __('Entity Name') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}" required autocomplete="title">
+
+                                                        @error('title')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="address" class="col-md-4 col-form-label text-md-right">{{ __('Address') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="address" type="text" class="form-control @error('address') is-invalid @enderror" name="address" value="{{ old('address') }}" required autocomplete="address">
+
+                                                        @error('address')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+
+                                        <!-- <div class="collapse-group">
+                                            <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#financial_info">Financial Information</span>
+                                            <div id="financial_info" class="collapse in">
+                                                <div class="form-group row">
+                                                    <label for="rent" class="col-md-4 col-form-label text-md-right">{{ __('Rent') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="rent" type="text" class="form-control @error('rent') is-invalid @enderror" name="rent" value="{{ old('rent') }}" required autocomplete="rent">
+
+                                                        @error('rent')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="deposit" class="col-md-4 col-form-label text-md-right">{{ __('Deposit') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="deposit" type="text" class="form-control @error('deposit') is-invalid @enderror" name="deposit" value="{{ old('deposit') }}" required autocomplete="deposit">
+
+                                                        @error('deposit')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="collapse-group">
+                                            <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#property_images">Images</span>
+                                            <div id="property_images" class="collapse">
+                                                <div class="form-group row">
+                                                    <label for="images" class="col-md-4 col-form-label text-md-right">{{ __('Image') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="images" type="file" class="form-control @error('images[]') is-invalid @enderror" name="images[]" value="{{ old('images') }}" autocomplete="images[]" multiple>
+
+                                                        @error('images')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                        </div> 
+
+
+                                        <div class="collapse-group">
+                                            <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#property_doc">Property Documents</span>
+                                            <div id="property_doc" class="collapse">
+                                                <div class="form-group row">
+                                                    <label for="property_doc_file" class="col-md-4 col-form-label text-md-right">{{ __('Attach File') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="property_doc_file" type="file" class="form-control @error('property_doc_file') is-invalid @enderror" name="property_doc_file" value="{{ old('property_doc_file') }}" autocomplete="property_doc_file">
+
+                                                        @error('property_doc_file')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="collapse-group">
+                                            <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#add_meter_toggle">Add Meter</span>
+                                            <div id="add_meter_toggle" class="collapse">
+                                                <div class="form-group row">
+                                                        <div class="col-md-3 col-form-label text-md-right">
+                                                            <span class="" id="add_new_meater">Add New Meater <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <div class="custom-meater"></div>
+                                                        </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="collapse-group">
+                                            <span type="button" class="btn btn-info" data-toggle="collapse" data-target="#property_manages">Add Property Manager</span>
+                                            <div id="property_manages" class="collapse">
+                                                <div class="form-group row">
+                                                    <label for="manager_email" class="col-md-4 col-form-label text-md-right">{{ __('Manager Email') }}</label>
+
+                                                    <div class="col-md-6">
+                                                        <input id="manager_email" type="email" class="form-control @error('manager_email') is-invalid @enderror" name="manager_email" value="{{ old('manager_email') }}" autocomplete="manager_email">
+
+                                                        @error('manager_email')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+ -->
+
+                                        <div class="form-group row submit">
+                                                <div class="col-md-12">
+                                                <button type="submit" class="btn btn-primary">
+                                                    {{ __('create') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                        <!------------------>
+                </div>
+            </div>
+        </div> 
+        <style type="text/css">
+            .collapse-group span.btn {width: 100%; margin-bottom: 15px; text-align: left; background-color: #f28401; border-color: #f28401; } 
+            .collapse-group .btn-info:hover ,.collapse-group .btn-info:focus {color: #0000008f; background-color: #fae4c4; border-color: #fae4c4; }
+            span#add_new_meater {background: white; padding: 5px; border-radius: 4px; border: 2px solid #c1b4b4; cursor: pointer; }
+            .custom-meater .meter-title {font-size: 20px; color: #ff8500; padding: 15px 0; }
+            .custom-meater span.glyphicon.glyphicon-remove {position: relative; top: 50px; left: 95%; }
+            .form-group-main {border: 2px solid #c1b4b4; padding: 15px; border-radius: 5px;     margin: 15px 0;}
+        </style>
+        <script>
+            $(document).ready(function(){
+                $('#add_new_meater').click(function(){
+                   var meter_number_count = $('.form-group-main').length;
+                    $('.custom-meater').append('<div class="meter-form"> <span onclick="removeFunction(this)" class="glyphicon glyphicon-remove"></span> <div class="form-group-main"> <div class="meter-title">Meter Number '+(meter_number_count+1)+'</div> <div class="form-group row"> <label for="meter_type" class="col-md-3 col-form-label text-md-right">Meter Type</label> <div class="col-md-9"> <select id="meter_type" class="form-control" name="meter['+meter_number_count+'][meter_type]"> <option value ="electric_meter">Electric Meter</option> <option value ="water_meter">Water Meter</option> </select> </div> </div> <div class="form-group row"> <label for="ean_number" class="col-md-3 col-form-label text-md-right">EAN Number</label> <div class="col-md-9"> <input id="ean_number" type="text" class="form-control" name="meter['+meter_number_count+'][ean_number]"> </div> </div> <div class="form-group row"> <label for="meter_number" class="col-md-3 col-form-label text-md-right">Meter Number</label> <div class="col-md-9"> <input id="meter_number" type="text" class="form-control" name="meter['+meter_number_count+'][meter_number]"> </div> </div> <div class="form-group row"> <label for="unit_price" class="col-md-3 col-form-label text-md-right">Unit Price</label> <div class="col-md-9"> <input id="unit_price" type="text" class="form-control" name="meter['+meter_number_count+'][unit_price]"> </div> </div> <div class="form-group row"> <label for="meter_doc" class="col-md-3 col-form-label text-md-right">Meter Documents</label> <div class="col-md-9"> <input id="meter_doc"  accept=".pdf" type="file" class="form-control" name="meter['+meter_number_count+'][meter_doc]"> </div> </div> </div> </div>');
+                });                
+            });
+            function removeFunction(e){
+               $(e).next('.form-group-main').remove();
+               $(e).remove();
+            }
+        </script>
+<!--
+        <div class="meter-form">
+            <span onclick="removeFunction(this)" class="glyphicon glyphicon-remove"></span>
+            <div class="form-group-main">
+                <div class="meter-title">Meter Number '+(meter_number_count+1)+'</div>
+                <div class="form-group row">
+                    <label for="meter_type" class="col-md-3 col-form-label text-md-right">Meter Type</label>
+                    <div class="col-md-9">
+                        <select id="meter_type" class="form-control" name="meter['+meter_number_count+'][meter_type]"> 
+                            <option value ="electric_meter">Electric Meter</option>
+                            <option value ="water_meter">Water Meter</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="ean_number" class="col-md-3 col-form-label text-md-right">EAN Number</label>
+                    <div class="col-md-9">
+                        <input id="ean_number" type="text" class="form-control" name="meter['+meter_number_count+'][ean_number]">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="meter_number" class="col-md-3 col-form-label text-md-right">Meter Number</label>
+                    <div class="col-md-9">
+                        <input id="meter_number" type="text" class="form-control" name="meter['+meter_number_count+'][meter_number]">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="unit_price" class="col-md-3 col-form-label text-md-right">Unit Price</label>
+                    <div class="col-md-9">
+                        <input id="unit_price" type="text" class="form-control" name="meter['+meter_number_count+'][unit_price]">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="meter_doc" class="col-md-3 col-form-label text-md-right">Meter Documents</label>
+                    <div class="col-md-9">
+                        <input id="meter_doc" type="file" accept=".pdf" class="form-control" name="meter['+meter_number_count+'][meter_doc]">
+                    </div>
+                </div>
+            </div>
+        </div>   
+        -->
+@endsection

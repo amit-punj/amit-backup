@@ -1,0 +1,438 @@
+<?php
+
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Validator;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Meters;
+use App\Contracts;
+use App\PropertiesUnit;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+class PropertyController extends Controller {   
+
+    const Property_Manager = 3;
+    const Property_Description_Experts = 4;
+    const Legal_Advisor = 5;
+    const Visit_Organizer = 6;
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
+    public function index(){
+        return view('dashboard.createproperty');
+    }
+
+    public function membershipdetails(){
+        $membership_data = DB::table('membership_payments')
+            ->join('plans', 'membership_payments.plan_id', '=', 'plans.id')
+            ->where('membership_payments.user_id', \Auth::user()->id)
+            ->select('membership_payments.*', 'plans.*', 'membership_payments.status')
+            ->get();
+        return view('dashboard.membershipdetails')->with(['membership_data'=>$membership_data]);
+    }
+
+    public function list(){
+        $properties = DB::table('properties')->where('user_id', \Auth::user()->id)->get();
+        return view('dashboard.listofproperties')->with(['properties'=>$properties]);
+    }  
+    public function managelist(){
+        $propertyIds = null;
+        $invitations = DB::table('invitations')->select('property_id')->groupBy('property_id')->where('email', \Auth::user()->email)->get();
+        foreach ($invitations as $key => $value) {
+            $propertyIds[] = $value->property_id;
+        }
+        $properties = DB::table('properties')->whereIn('id', $propertyIds)->get();
+        return view('dashboard.manager.listofproperties')->with(['properties'=>$properties]);
+    }
+
+    public function editUnit($id){
+        $unit = DB::table('property_units')->where('id', $id)->first();
+        $property = DB::table('properties')->where('id', $unit->property_id)->first();
+        $PropertyManagers = DB::table('users')->where('user_role', self::Property_Manager)->get();
+        $PropertyDescriptionExperts = DB::table('users')->where('user_role', self::Property_Description_Experts)->get();
+        $LegalAdvisors = DB::table('users')->where('user_role', self::Legal_Advisor)->get();
+        $VisitOrganizers = DB::table('users')->where('user_role', self::Visit_Organizer)->get();
+        return view('dashboard.editunit')->with([
+            'unit'=>$unit,
+            'property'=>$property,
+            'PropertyManagers'=> $PropertyManagers, 
+            'PropertyDescriptionExperts'=> $PropertyDescriptionExperts,
+            'LegalAdvisors' => $LegalAdvisors,
+            'VisitOrganizers' => $VisitOrganizers
+        ]);
+    }
+
+
+    public function view($id){
+        $data = Properties::find($id);
+        if($data){
+            $images = null;
+            if($data->images) {
+                $images = json_decode($data->images, true);
+            }
+            return view('viewproperty')->with(['data'=>$data,'images'=> $images]);
+        } else {
+            return abort(404);
+        }       
+    }
+
+    public function listUnit(){
+        $units = DB::table('properties')
+            ->join('property_units', 'properties.id', '=', 'property_units.property_id')
+            ->where('properties.user_id', \Auth::user()->id)
+            ->select('property_units.*','properties.title','property_units.id')
+            ->get();
+        $properties = DB::table('properties')->where('user_id', \Auth::user()->id)->get();
+        $PropertyManagers = DB::table('users')->where('user_role', self::Property_Manager)->get();
+        $PropertyDescriptionExperts = DB::table('users')->where('user_role', self::Property_Description_Experts)->get();
+        $LegalAdvisors = DB::table('users')->where('user_role', self::Legal_Advisor)->get();
+        $VisitOrganizers = DB::table('users')->where('user_role', self::Visit_Organizer)->get();
+        return view('dashboard.listunits')->with([
+            'properties'=>$properties, 
+            'units'=>$units, 
+            'PropertyManagers'=> $PropertyManagers, 
+            'PropertyDescriptionExperts'=> $PropertyDescriptionExperts,
+            'LegalAdvisors' => $LegalAdvisors,
+            'VisitOrganizers' => $VisitOrganizers
+        ]);
+    }
+    public function managelistUnit(){
+        $invitations = DB::table('invitations')
+                        ->select(['property_id','property_unit_id'])
+                        ->groupBy(['property_id','property_unit_id'])
+                        ->where('email', \Auth::user()->email)
+                        ->get();
+        foreach ($invitations as $key => $value) {
+            $propertyIds[] = $value->property_id;
+            $propertyUnitIds[] = $value->property_unit_id;
+        }
+        $assignedUnits = DB::table('properties')
+            ->join('property_units', 'properties.id', '=', 'property_units.property_id')
+            ->whereIn('property_units.id', $propertyUnitIds)
+            ->select('property_units.*','properties.title','property_units.id')
+            ->get();
+        $createdUnits = DB::table('properties')
+            ->join('property_units', 'properties.id', '=', 'property_units.property_id')
+            ->where('property_units.created_user_id', \Auth::user()->id)
+            ->select('property_units.*','properties.title','property_units.id')
+            ->get();
+        $properties = DB::table('properties')->whereIn('id', $propertyIds)->get();
+        return view('dashboard.manager.listunits')->with(['properties'=>$properties, 'assignedUnits'=>$assignedUnits,'createdUnits'=>$createdUnits]);
+    }
+
+    public function listMeters($id){
+        $unit = DB::table('property_units')->where('id', $id)->first();
+        $property = DB::table('properties')->where('id', $unit->property_id)->first();
+        $units = DB::table('properties')
+            ->join('property_units', 'properties.id', '=', 'property_units.property_id')
+            ->where('properties.user_id', \Auth::user()->id)
+            ->select('property_units.*','properties.title')
+            ->get();
+        $meters = DB::table('meters')
+                ->join('property_units', 'property_units.id', '=', 'meters.property_unit_id')
+                ->join('properties', 'properties.id', '=', 'property_units.property_id')
+                //->where('properties.user_id', \Auth::user()->id)
+                ->where('meters.property_unit_id', $id)
+                ->select('property_units.*','properties.title','meters.*','meters.id')
+                ->get();
+        // $properties = DB::table('properties')->where('user_id', \Auth::user()->id)->get();
+        return view('dashboard.listmeters')->with(['unit'=>$unit,'property'=>$property, 'meters'=>$meters, 'units'=>$units]);
+    }
+
+    public function listContracts($id){
+        $unit = DB::table('property_units')->where('id', $id)->first();
+        $property = DB::table('properties')->where('id', $unit->property_id)->first();
+        $units = DB::table('properties')
+            ->join('property_units', 'properties.id', '=', 'property_units.property_id')
+            ->where('properties.user_id', \Auth::user()->id)
+            ->select('property_units.*','properties.title')
+            ->get();
+        $contracts = DB::table('contracts')
+                ->join('property_units', 'property_units.id', '=', 'contracts.property_unit_id')
+                ->join('properties', 'properties.id', '=', 'property_units.property_id')
+                ->join('users', 'users.id', '=', 'contracts.tenent_id')
+                //->where('properties.user_id', \Auth::user()->id)
+                ->where('contracts.property_unit_id',$id)
+                ->select('property_units.*','properties.title','contracts.*','users.name','contracts.id')
+                ->get();
+        // $contracts = DB::table('contracts')
+        //         ->join('property_units', 'property_units.id', '=', 'contracts.property_unit_id')
+        //         ->join('properties', 'properties.id', '=', 'property_units.property_id')
+        //         ->where('properties.user_id', \Auth::user()->id)
+        //         ->select('property_units.*','properties.title','contracts.*')
+        //         ->get();
+        //$properties = DB::table('properties')->where('user_id', \Auth::user()->id)->get(); 
+        $tenents = DB::table('users')->where('user_role', 1)->get();
+        return view('dashboard.listcontracts')->with(['unit'=>$unit,'tenents'=>$tenents,'property'=>$property, 'contracts'=>$contracts, 'units'=>$units]);
+    }
+
+    public function listGuarantors($id){
+        $unit = DB::table('property_units')->where('id', $id)->first();
+        $property = DB::table('properties')->where('id', $unit->property_id)->first();
+        $invitations = DB::table('invitations')->where([['user_id', \Auth::user()->id],['property_unit_id',$id]])->get(); 
+        return view('dashboard.listguarantors')->with(['unit'=>$unit,'property'=>$property, 'invitations'=>$invitations]); 
+    }
+
+    public function createUnit(Request $request){
+        $request->validate([
+            'property_id' => ['required'],
+            'unit_name' => ['required'],
+            'rent' => ['required','numeric'],
+            'deposit' => ['required','numeric'],
+        ]);
+        $propertiesUnit = new PropertiesUnit;
+        $propertiesUnit->property_id = $request->input('property_id');
+        $propertiesUnit->unit_name = $request->input('unit_name');
+        $propertiesUnit->rent = $request->input('rent');
+        $propertiesUnit->deposit = $request->input('deposit');
+        $propertiesUnit->created_user_id = \Auth::user()->id;
+        if($request->input('property_manager_id') == ''){
+            $propertiesUnit->property_manager_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_manager_id = $request->input('property_manager_id');
+        }
+        if($request->input('property_description_experts_id') == ''){
+            $propertiesUnit->property_description_experts_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_description_experts_id = $request->input('property_description_experts_id');
+        }
+        if($request->input('property_legal_advisor_id') == ''){
+            $propertiesUnit->property_legal_advisor_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_legal_advisor_id = $request->input('property_legal_advisor_id');
+        }
+        if($request->input('property_visit_organizer_id') == ''){
+            $propertiesUnit->property_visit_organizer_id = \Auth::user()->id;
+        } else {
+            $propertiesUnit->property_visit_organizer_id = $request->input('property_visit_organizer_id');
+        }
+        $propertiesUnit->save();
+        $this->sendMail([
+            "Property Manager" => $propertiesUnit->property_manager_id, 
+            "Property Description Experts" =>$propertiesUnit->property_description_experts_id, 
+            "Property Legal Advisor" => $propertiesUnit->property_legal_advisor_id,  
+            "Property Visit Organizer" => $propertiesUnit->property_visit_organizer_id
+        ]);
+        return redirect()->back()->with('message', 'Unit Created Successfully!');
+    }
+
+    public function createMeter(Request $request){
+        $request->validate([
+            'property_id' => ['required'],
+            'property_unit_id' => ['required'],
+            'meter_type' => ['required'],
+            'unit_price' => ['required','numeric']
+        ]);
+        $MeterObj = new Meters;
+        $MeterObj->property_id = $request->input('property_id');
+        $MeterObj->property_unit_id = $request->input('property_unit_id');
+        $MeterObj->meter_type = $request->input('meter_type');
+        $MeterObj->unit_price = $request->input('unit_price');
+        $MeterObj->save();
+        return redirect()->back()->with('message', 'Meter Added Successfully!');
+    }
+
+    public function createContract(Request $request){
+        $request->validate([
+            'property_id' => ['required'],
+            'property_unit_id' => ['required'],
+            'contract_type' => ['required'],
+            'tenent_id' => ['required'],
+            'starting_date' => ['required'],
+            'end_date' => ['required']
+        ]);
+        $contract = new Contracts;
+        $contract->property_id = $request->input('property_id');
+        $contract->property_unit_id = $request->input('property_unit_id');
+        $contract->tenent_id = $request->input('tenent_id');
+        $contract->contract_type = $request->input('contract_type');
+        $contract->starting_date = $request->input('starting_date');
+        $contract->end_date = $request->input('end_date');
+        $contract->save();
+        return redirect()->back()->with('message', 'Contract Created Successfully!');
+    }
+
+
+
+
+    public function create(Request $request){
+        $request->validate([
+            'user_id' => ['required'],
+            'title' => ['required', 'string'],
+            'type' => ['required'],
+            'address' => ['required'],
+            // 'rent' => ['required','numeric'],
+            // 'deposit' => ['required','numeric'],
+            // 'images.*' => ['mimes:jpeg,png,jpg','max:2048'],
+            // 'property_doc_file' => ['max:10000','mimes:pdf'],
+        ]);
+
+        /*  Create Property */
+        $property = new Properties;
+        $property->user_id = $request->input('user_id');
+        $property->title = $request->input('title');
+        $property->location = $request->input('address');
+        $property->property_type = $request->input('type');
+        // $property->rent = $request->input('rent');
+        // $property->deposite = $request->input('deposit');
+
+        // if($request->hasFile('images')) {
+        //     $image_name = [];
+        //     foreach ($request->images as $image) {
+        //         $imageName = time().'.'.$image->getClientOriginalExtension();
+        //         $image->move(public_path('images/property_images'), $imageName);
+        //         $image_name[] = $imageName;
+        //     }
+        //    $property->images = json_encode($image_name);
+        // }
+
+        // if($request->hasFile('property_doc_file')) {   
+        //     $file = $request->file('property_doc_file');      
+        //     $file_name = time().'.'.$file->getClientOriginalExtension();
+        //     $file->move(public_path('/property_doc'), $file_name);
+        //     $property->property_doc = $file_name;
+        // }
+        // $property->save();
+        // $propertyId = $property->id;
+
+        /* Create Meter */
+        // if ($request->has(['meter'])) {
+        //    foreach ($request->meter as $meter) {
+        //         $MeterObj = new Meters;
+        //         $MeterObj->property_id = $propertyId;
+        //         $MeterObj->meter_type = $meter['meter_type'];
+        //         $MeterObj->meter_number = $meter['meter_number'];
+        //         $MeterObj->ean_number = $meter['ean_number'];
+        //         $MeterObj->unit_price = $meter['unit_price'];
+        //         if( isset($meter['meter_doc']) ) {
+        //             $file = $meter['meter_doc'];
+        //             $file_name = time().$file->getClientOriginalName();
+        //             $destinationPath = public_path()."/property_doc/".$file_name;
+        //             $file->move($destinationPath,$file->getClientOriginalName());
+        //             $MeterObj->document_file = $file_name;
+        //         }
+
+        //         $MeterObj->save();
+        //    };
+        // }
+        $property->save();
+        return redirect()->back()->with('message', 'Property Create Successfully!');
+    }
+
+    public function delete($id){
+        $property = new Properties;
+        $property->find($id)->delete();
+        Meters::where('property_id', $id)->delete();
+        return redirect()->back()->with('message', 'Delete Successfully!');
+    } 
+
+    public function deleteUnit($id){
+        $propertiesUnit = new PropertiesUnit;
+        $propertiesUnit->find($id)->delete();
+        return redirect()->back()->with('message', 'Unit Delete Successfully!');
+    }
+
+    public function deleteMeter($id){
+        $meters = new Meters;
+        $meters->find($id)->delete();
+        return redirect()->back()->with('message', 'Meter Delete Successfully!');
+    }
+
+    public function deleteContract($id){
+        $contract = new Contracts;
+        $contract->find($id)->delete();
+        return redirect()->back()->with('message', 'Meter Delete Successfully!');
+    }
+
+    public function updateUnit(Request $request){
+        $this->validate($request, [
+            'unit_id' => 'required',
+            'property_id' => 'required',
+            'unit_name' => 'required',
+            'rent' => 'required|numeric',
+            'deposit' => 'required|numeric',
+        ]);
+        $propertiesUnit = PropertiesUnit::find($request->input('unit_id'));
+        $propertiesUnit->property_id = $request->input('property_id');
+        $propertiesUnit->unit_name = $request->input('unit_name');
+        $propertiesUnit->rent = $request->input('rent');
+        $propertiesUnit->deposit = $request->input('deposit');
+        if($request->input('property_manager_id') == ''){
+            $propertiesUnit->property_manager_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_manager_id = $request->input('property_manager_id');
+        }
+        if($request->input('property_description_experts_id') == ''){
+            $propertiesUnit->property_description_experts_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_description_experts_id = $request->input('property_description_experts_id');
+        }
+        if($request->input('property_legal_advisor_id') == ''){
+            $propertiesUnit->property_legal_advisor_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_legal_advisor_id = $request->input('property_legal_advisor_id');
+        }
+        if($request->input('property_visit_organizer_id') == ''){
+            $propertiesUnit->property_visit_organizer_id = \Auth::user()->id;
+        } else {
+           $propertiesUnit->property_visit_organizer_id = $request->input('property_visit_organizer_id');
+        }
+        $propertiesUnit->save();
+        return redirect()->back()->with('message', 'Update Successfully!');
+    }
+
+    public function updateMeter(Request $request){
+       $this->validate($request, [
+            'meter_id' => 'required',
+            'property_id' => 'required',
+            'property_unit_id' => 'required',
+            'meter_type' => 'required',
+            'unit_price' => 'required|numeric',
+        ]);
+        $meter = Meters::find($request->input('meter_id'));
+        //$plan->id = $request->input('unit_id');
+        $meter->property_id = $request->input('property_id');
+        $meter->property_unit_id = $request->input('property_unit_id');
+        $meter->meter_type = $request->input('meter_type');
+        $meter->unit_price = $request->input('unit_price');
+        $meter->save();
+        return redirect()->back()->with('message', 'Update Successfully!');
+    }
+
+    public function updateContract(Request $request){
+        die('dsad');
+    }
+
+    public function sendMail($ids){
+        foreach ($ids as $as => $id) {
+            $user = DB::table('users')->where('id', $id)->first();
+            $to_name = $user->name." ".$user->last_name;
+            $to_email = $user->email;
+            $data = array('name'=>$to_name, "email" => $to_email,"as" => $as);
+                
+            Mail::send('emails.invitation', $data, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)
+                        ->subject('Invitations from Reasy Properties');
+                $message->from('malkeetvisionvivante@gmail.com','Reasy Property');
+            });
+        }
+        return true;
+    }
+    public function dragdrop(Request $request)
+    {
+        $postData = $request->all();
+        $files = $request->file('file');
+        if($request->hasFile('file')){
+            $destinationPath = public_path('images/property_images');
+            $fileName = time()."_".$files->getClientOriginalName();
+            $files->move($destinationPath,$fileName);
+            return response()->json(['status' => 'success', 'target_file' => $fileName]);
+        }
+    }
+}

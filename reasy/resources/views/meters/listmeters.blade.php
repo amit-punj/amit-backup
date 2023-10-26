@@ -1,0 +1,269 @@
+@section('title','List of Meters')
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner', ['banner_text' => 'List of Meters'])
+<?php 
+$role = Auth::user()->user_role; 
+$meterPermission = App\Helpers\Helper::accessPermission($unit->user_id,Auth::user()->user_role,'meter_permission');
+?>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                        {!! implode('', $errors->all('<div class="error-message">:message</div>')) !!}
+                @endif
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-nevigation">
+                            @include('dashboard.topnevigation')
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="add-unit-main">
+                            @if($role == 2 )
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add Meter <span class="glyphicon glyphicon-plus"></span></button>
+                            @elseif($role == 3)
+                                @if($meterPermission !=0 && $meterPermission !=1)
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add Meter <span class="glyphicon glyphicon-plus"></span></button>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+                </div>  
+                <div class="row">
+                    @if(count($electricMeters) > 0)
+                	<div class="col-sm-4">
+	            	 	<div class="building-body">
+	            	 		<div class="row">
+	            	 			<div class="col-sm-12">
+	                                <div class="building-main">
+	                                    <div class="building-title">Electricity Meter</div>
+	                                </div>
+	                            </div>
+	                            <div class="col-sm-12">
+                                    @foreach ($electricMeters as $meter)
+		                            <div class="unit-body">
+                                        @if($role == 2)
+    		                                <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                        @elseif($role == 3)
+                                            @if($meterPermission !=0 && $meterPermission !=1)
+                                            <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                            @endif
+                                        @endif
+		                                <div class="unit-delete">
+                                            <a href="{{ url('/meter-details/'.$meter->id.'?uID='.$meter->unit_id) }}"><span class="glyphicon glyphicon-edit" title="Edit"></span></a>
+                                        </div>
+		                                <div class="unit"><span>Unit Name : </span> {{ substr($unit->unit_name,0,15) }}... </div>
+		                                <div class="unit"><span>Meter Type : </span> Electricity Meter </div> 
+		                                <div class="unit"><span>EAN Number : </span> {{ $meter->ean_number }} </div>
+		                                <div class="unit"><span>Meter Number : </span> {{ $meter->meter_number }} </div>
+		                            </div>
+                                    @endforeach
+		                        </div>
+	            	 		</div>
+	            	 	</div>
+            	 	</div>
+                    @endif
+
+                    @if(count($waterMeters) > 0)
+                    <div class="col-sm-4">
+                        <div class="building-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="building-main">
+                                        <div class="building-title">Water Meter</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    @foreach ($waterMeters as $meter)
+                                    <div class="unit-body">
+                                        @if($role == 2)
+                                            <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                        @elseif($role == 3)
+                                            @if($meterPermission !=0 && $meterPermission !=1)
+                                            <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                            @endif
+                                        @endif
+                                        <div class="unit-delete">
+                                            <a href="{{ url('/meter-details/'.$meter->id.'?uID='.$meter->unit_id) }}"><span class="glyphicon glyphicon-edit" title="Edit"></span></a>
+                                        </div>
+                                        <div class="unit"><span>Unit Name : </span> {{ substr($unit->unit_name,0,15) }}... </div>
+                                        <div class="unit"><span>Meter Type : </span> Water Meter </div> 
+                                        <div class="unit"><span>EAN Number : </span> {{ $meter->ean_number }} </div>
+                                        <div class="unit"><span>Meter Number : </span> {{ $meter->meter_number }} </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(count($gasMeters) > 0)
+                    <div class="col-sm-4">
+                        <div class="building-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="building-main">
+                                        <div class="building-title">Gas Meter</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    @foreach ($gasMeters as $meter)
+                                    <div class="unit-body">
+                                        @if($role == 2)
+                                            <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                        @elseif($role == 3)
+                                            @if($meterPermission !=0 && $meterPermission !=1)
+                                            <div class="unit-delete">
+                                                <a class="delete" href="{{ url('/delete-meter/'.$meter->id) }}"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                            </div>
+                                            @endif
+                                        @endif
+                                        <div class="unit-delete">
+                                            <a href="{{ url('/meter-details/'.$meter->id.'?uID='.$meter->unit_id) }}"><span class="glyphicon glyphicon-edit" title="Edit"></span></a>
+                                        </div>
+                                        <div class="unit"><span>Unit Name : </span> {{ substr($unit->unit_name,0,15) }}... </div>
+                                        <div class="unit"><span>Meter Type : </span> Gas Meter </div> 
+                                        <div class="unit"><span>EAN Number : </span> {{ $meter->ean_number }} </div>
+                                        <div class="unit"><span>Meter Number : </span> {{ $meter->meter_number }} </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if((count($gasMeters) == 0) && (count($waterMeters) == 0) && (count($electricMeters) == 0))
+                         <div class="col-sm-4"> <div class="not_found">Not Found Any Meter.</div></div>
+                    @endif
+                </div>                                               
+            </div>
+        </div>
+    </div> 
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{{ url('/create-meter') }}" id="create_meter" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="unit_id" value="{{ $unit->id }}">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Meter</h3>
+                    </div>
+                    <div class="modal-body">
+                         <div class="form-group row">
+                            <label for="meter_type" class="col-md-4 col-form-label text-md-right">{{ __('Meter Type') }}</label>
+                            <div class="col-md-6">
+                                <select id="meter_type" type="text" class="form-control" name="meter_type" value="">
+                                    <option value="electric_meter">Electricity Meter</option>
+                                    <option value="water_meter">Water Meter</option>
+                                    <option value="gas_meter">Gas Meter</option>
+                                </select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label for="unit_price" class="col-md-4 col-form-label text-md-right">{{ __('Per Unit Price') }}</label>
+                            <div class="col-md-6">
+                                <input id="unit_price" type="text" class="form-control" name="unit_price" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="ean_number" class="col-md-4 col-form-label text-md-right">{{ __('EAN Number') }}</label>
+                            <div class="col-md-6">
+                                <input id="ean_number" type="text" class="form-control" name="ean_number" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="meter_number" class="col-md-4 col-form-label text-md-right">{{ __('Meter Number') }}</label>
+                            <div class="col-md-6">
+                                <input id="meter_number" type="text" class="form-control" name="meter_number" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="meter_number" class="col-md-4 col-form-label text-md-right">Consumption (%)</label>
+                            <div class="col-md-6">
+                                <input id="consumption" type="text" class="form-control" name="consumption" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="submit" class="btn btn-success">Add Meter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>   
+        jQuery('#create_meter').validate({
+            errorClass:"red",
+            validClass:"green",
+            rules:{                  
+                unit_id:{
+                    required:true,
+                },
+                meter_type:{
+                    required:true
+                },
+                unit_price:{
+                    required:true,
+                    number:true
+                },
+                ean_number:{
+                    required:true
+                }, 
+                meter_number:{
+                    required:true
+                },
+                consumption:{
+                    required:true,
+                    number:true,
+                    min:1,
+                    max:100
+                },
+            }      
+        }); 
+        jQuery(document).ready(function(){
+            jQuery('a.delete').click(function(e){
+                e.preventDefault();
+               var href      = jQuery(this).attr('href');
+               var result = confirm("Want to Delete meter?");
+               if (result) {
+                   window.location = href;
+               }
+            }); 
+        });   
+    </script>
+    <style type="text/css">
+        .error-message{color: #fff; background-color: red; padding: 5px; margin: 5px 0; }
+        .unit-body {border: 2px solid #f28401; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .unit_number {font-size: 18px; }
+        .unit-body span {font-size: 15px; font-weight: bold; color: #f28401; }
+        .unit {padding: 5px 0; }
+        .top-nevigation {padding-bottom: 25px; }
+        ul.nav.nav-tabs {border: 0; }
+        .top-nevigation li {border: 0 !important; padding: 0 6px; }
+        .top-nevigation a {border: 0 !important; background-color: #fae4c4; color: inherit; }
+        .top-nevigation li.active a {background: #f28302; color: #fff; }
+        .add-unit-main {text-align: right; }
+        .unit-delete span {color: #000000bd; position: relative; float: right; }
+        .building-body{border: 1px solid #f28401; padding: 15px; margin: 15px 0;}
+        .building-title {font-size: 33px; font-weight: normal; text-align: center; }
+        .not_found {margin-bottom: 50px; }
+        </style>
+@endsection

@@ -1,0 +1,1380 @@
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner')
+<style type="text/css">
+    .c309 {
+        top: -3px;
+        left: -10px;
+        width: 4%;
+        cursor: inherit;
+        height: 100%;
+        margin: 0;
+        /* opacity: 0; */
+        padding: 0;
+        position: absolute;
+    }
+</style>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                @include('dashboard.sidebar')
+            </div>
+            <div class="col-md-9">
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
+                <div class="profile-page-title">Create Unit</div>                        
+                    <!------------------>
+                <div class="div" id="myWizard">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" style="width: 14.30%;">
+                            Step 1 of 7
+                        </div>
+                    </div>
+                    <div class="navbar">
+                        <div class="navbar-inner">
+                            <ul class="nav nav-pills nav-wizard">
+                                <li class="active">
+                                    <a class="hidden-xs" href="#step1" data-toggle="tab" data-step="1">1. Property Type</a>
+                                    <a class="visible-xs" href="#step1" data-toggle="tab" data-step="1">1.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step2" data-toggle="tab" data-step="2">2. Basic Details</a>
+                                    <a class="visible-xs" href="#step2" data-toggle="tab" data-step="2">2.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step3" data-toggle="tab" data-step="3">3. Unit Details</a>
+                                    <a class="visible-xs" href="#step3" data-toggle="tab" data-step="3">3.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step4" data-toggle="tab" data-step="4">4. Tenant</a>
+                                    <a class="visible-xs" href="#step4" data-toggle="tab" data-step="4">4.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step5" data-toggle="tab" data-step="5">5. Assign Unit</a>
+                                    <a class="visible-xs" href="#step5" data-toggle="tab" data-step="5">5.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step6" data-toggle="tab" data-step="6">6. Rules</a>
+                                    <a class="visible-xs" href="#step6" data-toggle="tab" data-step="6">6.</a>
+                                    <div class="nav-arrow"></div>
+                                </li>
+                                <li class="disabled">
+                                    <div class="nav-wedge"></div>
+                                    <a class="hidden-xs" href="#step7" data-toggle="tab" data-step="7">7. Images</a>
+                                    <a class="visible-xs" href="#step7" data-toggle="tab" data-step="7">7.</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ url('/create-property') }}" enctype="multipart/form-data" id="create_propert_form">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="step1">
+                                <h3>Property Type</h3>
+                                <div class="well">
+                                    <div class="form-group row">
+                                        <label for="type" class="col-md-4 col-form-label text-md-right">{{ __('Property Type *') }}</label>
+                                        <div class="col-md-6">
+                                            <select name="p_type" id="p_type" class="form-control">
+                                                <!-- <option value="">Select Property Type</option> -->
+                                                <option value="unit">Unit</option>
+                                                <option value="building">Building</option>
+                                            </select>
+                                            @error('type')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div> 
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step2">
+                                <h3>Basic Details</h3>
+                                <div class="well">  
+                                    <div class="form-group row">
+                                        <label for="title" class="col-md-4 col-form-label text-md-right">{{ __('Unit Name *') }}</label>
+                                        <div class="col-md-6">
+                                            <input id="title" type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title', 'Unit Name') }}" >
+
+                                            @error('title')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="area" class="col-md-4 col-form-label text-md-right">{{ __('Size(Sq Ft) *') }}</label>
+
+                                        <div class="col-md-6">
+                                            <input id="area" type="text" class="form-control @error('area') is-invalid @enderror" name="area" value="{{ old('area','100') }}"  >
+                                            @error('area')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Description *') }}</label>
+                                        <div class="col-md-6">
+                                            <textarea id="description" class="form-control @error('description') is-invalid @enderror" name="description"  >{{ old('description','There are two ways to think about finding real estate leads. Traditional real estate advertising focuses on outbound leads, which involves targeted prospecting to hone in on qualified leads.') }}</textarea>
+
+                                            @error('description')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="address" class="col-md-4 col-form-label text-md-right">{{ __('Address *') }}</label>
+                                        <input name="latitude" id="latitude" type="hidden" value="44">
+                                        <input name="longitude" id="longitude" type="hidden" value="34">
+                                        <div class="col-md-6">
+                                            <input id="autocomplete" type="text" class="form-control @error('address') is-invalid @enderror autocomplete" name="address" value="{{ old('address','Daytona Beach, FL, USA') }}" >
+
+                                            @error('address')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                          <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button"><span class="glyphicon glyphicon-chevron-left">&nbsp;Back</span></button>
+                                        
+                                          </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step3">
+                                <h3>Unit Details</h3>
+                                <div class="well">
+                                    <div class="form-group row">
+                                        <label for="type" class="col-md-4 col-form-label text-md-right">{{ __('Unit Type *') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="type" class="form-control @error('type') is-invalid @enderror" name="type" value="{{ old('type') }}" required>
+                                                <option value="residential">Residential</option>
+                                                <option value="commercial">Commercial</option>
+                                                <option value="industrial">Industrial</option>
+                                            </select>
+                                            @error('type')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div> 
+                                    <div class="form-group row">
+                                        <label for="building_id" class="col-md-4 col-form-label text-md-right">{{ __('Select Building') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="building_id" class="form-control @error('building_id') is-invalid @enderror" name="building_id" value="{{ old('building_id') }}" >
+                                                <option value="">Select</option>
+                                                <option value="">Building 1</option>
+                                                <option value="">Building 2</option>
+                                            </select>                                         
+                                            @error('building_id')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <button style="float: right;" type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="meter_id" class="col-md-4 col-form-label text-md-right">{{ __('Meters') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="meter_id" class="form-control @error('meter_id') is-invalid @enderror" name="meter_id" value="{{ old('meter_id') }}"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="">Meter 1</option>
+                                                <option value="">Meter 2</option>
+                                            </select>                                         
+                                            @error('meter_id')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <button style="float: right;" type="button" class="btn btn-success" data-toggle="modal" data-target="#meterModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="rent" class="col-md-4 col-form-label text-md-right">{{ __('Rent *') }}</label>
+                                        <div class="col-md-6">
+                                            <input id="rent" type="text" class="form-control @error('rent') is-invalid @enderror" name="rent" value="{{ old('rent','10000') }}"  >
+
+                                            @error('rent')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cost_provision" class="col-md-4 col-form-label text-md-right">{{ __('Cost Provision') }}</label>
+                                        <div class="col-md-6">
+                                            <input id="cost_provision" type="text" class="form-control @error('cost_provision') is-invalid @enderror" name="cost_provision" value="{{ old('cost_provision','10000') }}"  >
+
+                                            @error('cost_provision')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="deposit" class="col-md-4 col-form-label text-md-right">{{ __('Deposit') }}</label>
+                                        <div class="col-md-6">
+                                            <input id="deposit" type="text" class="form-control @error('deposit') is-invalid @enderror" name="deposit" value="{{ old('deposit','1000') }}"  >
+
+                                            @error('deposit')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="deposit" class="col-md-4 col-form-label text-md-right">{{ __('Number of Bedrooms *') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control @error('deposit') is-invalid @enderror" name="bedrooms" id="bedrooms" placeholder="Number of Bedrooms" value="{{ old('bedrooms','3') }}" min="1" max="9">
+                                            @error('deposit')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="bed_funished" class="col-md-4 col-form-label text-md-right">{{ __('Bedroom Furnished *') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            @error('bed_funished')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="bed_lock" class="col-md-4 col-form-label text-md-right">{{ __('Lock on Bedroom') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_lock" value="yes"> Yes
+                                            <input type="radio" name="bed_lock" value="no"> No
+                                            @error('bed_lock')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="kitchen" class="col-md-4 col-form-label text-md-right">{{ __('Kitchen *') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="kitchen" value="no"> No
+                                            <input type="radio" name="kitchen" value="shared"> Shared
+                                            <input type="radio" name="kitchen" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="toilet" class="col-md-4 col-form-label text-md-right">{{ __('Toilet *') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="toilet" value="no"> No
+                                            <input type="radio" name="toilet" value="shared"> Shared
+                                            <input type="radio" name="toilet" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="living_room" class="col-md-4 col-form-label text-md-right">{{ __('Living Room') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="living_room" value="no"> No
+                                            <input type="radio" name="living_room" value="shared"> Shared
+                                            <input type="radio" name="living_room" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="balcony_terrace" class="col-md-4 col-form-label text-md-right">{{ __('Balcony/Terrace') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="balcony_terrace" value="no"> No
+                                            <input type="radio" name="balcony_terrace" value="shared"> Shared
+                                            <input type="radio" name="balcony_terrace" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="garden" class="col-md-4 col-form-label text-md-right">{{ __('Garden') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="garden" value="no"> No
+                                            <input type="radio" name="garden" value="shared"> Shared
+                                            <input type="radio" name="garden" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="basement" class="col-md-4 col-form-label text-md-right">{{ __('Basement') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="basement" value="no"> No
+                                            <input type="radio" name="basement" value="shared"> Shared
+                                            <input type="radio" name="basement" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="parking" class="col-md-4 col-form-label text-md-right">{{ __('Parking') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="parking" value="no"> No
+                                            <input type="radio" name="parking" value="shared"> Shared
+                                            <input type="radio" name="parking" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="wheelchair" class="col-md-4 col-form-label text-md-right">{{ __('Wheelchair Accessible') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="wheelchair" value="no"> No
+                                            <input type="radio" name="wheelchair" value="shared"> Shared
+                                            <input type="radio" name="wheelchair" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="allergy_friendly" class="col-md-4 col-form-label text-md-right">{{ __('Allergy friendly') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="allergy_friendly" value="no"> No
+                                            <input type="radio" name="allergy_friendly" value="shared"> Shared
+                                            <input type="radio" name="allergy_friendly" value="private"> Private
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="deposit" class="col-md-12 col-form-label text-md-right">{{ __('Amenities/Facilities available') }}</label>
+                                        <div class="col-md-12">
+                                            @foreach ($amenities as $amenity)  
+                                                <div class="col-md-4">
+                                                    <input class="form-control amenities-input" name="amenities[]" type="checkbox" value="{{$amenity->id}}">
+                                                    <label class="col-form-label">{{$amenity->amenities_name}}</label>
+                                                </div>
+                                             @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                          <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button"><span class="glyphicon glyphicon-chevron-left">&nbsp;Back</span></button>
+                                        
+                                          </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step4">
+                                <h3>Preferred Tenant</h3>
+                                <div class="well">
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Preferred Gender') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="unit_permission" value="read"> Male
+                                            <input type="radio" name="unit_permission" value="write"> Female
+                                            <input type="radio" name="unit_permission" value="full"> No Preference
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Minimum Age') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" name="min_age" id="min_age" min="18" max="50" value="{{old('min_age', '23')}}">
+                                         </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="max_age" class="col-md-4 col-form-label text-md-right">{{ __('Maximum Age') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" name="max_age" id="max_age" min="18" max="70" value="{{old('max_age', '45')}}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Tenant Type') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="unit_permission" checked="" value="any"> Any
+                                            <input type="radio" name="unit_permission" value="student"> Students Only
+                                            <input type="radio" name="unit_permission" value="working"> Working professionals only
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Couples Allowed?') }}</label>
+                                       <div class="col-md-6">
+                                            <input type="radio" name="unit_permission" value="no"> No
+                                            <input type="radio" name="unit_permission" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                          <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button"><span class="glyphicon glyphicon-chevron-left">&nbsp;Back</span></button>
+                                        
+                                          </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step5">
+                                <h3>Assign Unit</h3>
+                                <div class="well">
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Property Manager') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="property_id" type="text" class="form-control" name="property_manager_id" value="">
+                                                <option value="{{ Auth::user()->id }}">Select Property Manager</option>
+                                                @foreach ($PropertyManagers as $PropertyManager)  
+                                                    <option value="{{$PropertyManager->id}}">{{$PropertyManager->name." ".$PropertyManager->last_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <button style="float: right;" data-id="3" type="button" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#permissionModal">Permissions <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                            <!-- <button style="float: right;" data-id="3" type="button" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#assignModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button> -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Property Description Experts') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="property_description_experts_id" type="text" class="form-control" name="property_description_experts_id" value="">
+                                                <option value="{{ Auth::user()->id }}">Select Property Description Experts</option>
+                                                @foreach ($PropertyDescriptionExperts as $PropertyDescriptionExpert)  
+                                                    <option value="{{$PropertyDescriptionExpert->id}}">{{$PropertyDescriptionExpert->name." ".$PropertyDescriptionExpert->last_name }}</option>
+                                                @endforeach 
+                                            </select>
+                                        </div>
+                                        <!-- <div>
+                                            <button style="float: right;" data-id="4" type="button" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#assignModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div> -->
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Legal Advisor') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="property_legal_advisor_id" type="text" class="form-control" name="property_legal_advisor_id" value="">
+                                                <option value="{{ Auth::user()->id }}">Select Legal Advisor</option>
+                                                @foreach ($LegalAdvisors as $LegalAdvisor)  
+                                                    <option value="{{$LegalAdvisor->id}}">{{$LegalAdvisor->name." ".$LegalAdvisor->last_name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <!-- <div>
+                                            <button style="float: right;" type="button" data-id="5" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#assignModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div> -->
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Visit Organizer') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="property_visit_organizer_id" type="text" class="form-control" name="property_visit_organizer_id" value="">
+                                                <option value="{{ Auth::user()->id }}">Select Visit Organizer</option>
+                                                @foreach ($VisitOrganizers as $VisitOrganizer)  
+                                                    <option value="{{$VisitOrganizer->id}}">{{$VisitOrganizer->name." ".$VisitOrganizer->last_name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                       <!--  <div>
+                                            <button style="float: right;" data-id="6" type="button" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#assignModal">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div> -->
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Vendors') }}</label>
+                                       <div class="col-md-6">
+                                            <input type="hidden" name="vandor_data" value="" id="vandor_data">
+                                           <div id="add_vendors">
+                                               <span>Not Added</span>
+                                           </div>
+                                           <div id="add_vendors_data">
+                                           </div>
+                                        </div>
+                                       <div>
+                                            <button style="float: right;" data-id="6" type="button" class="btn btn-success open-assignModal" data-toggle="modal" data-target="#addVendorModel">Add New <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button"><span class="glyphicon glyphicon-chevron-left">&nbsp;Back</span></button>
+                                        </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step6">
+                                <h3>Rules</h3>
+                                <div class="well">
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Registration Possible') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Cleaning Common Eoom Incl.') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Cleaning Private Room Incl.') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Animal allowed') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Play Musical Instrument') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Smoking Allowed') }}</label>
+                                        <div class="col-md-6">
+                                            <input type="radio" name="bed_funished" value="no"> No
+                                            <input type="radio" name="bed_funished" value="yes"> Yes
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="property_id" class="col-md-4 col-form-label text-md-right">{{ __('Permissions *') }}</label>
+                                        <div class="col-md-8">
+                                            <input class="c309" type="checkbox" data-indeterminate="false" value="">
+                                            <span class="">I agree with the 
+                                                <a href="#" class="" target="_blank">Reasy terms & conditions </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button"><span class="glyphicon glyphicon-chevron-left">&nbsp;Back</span></button>
+                                        </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-primary btn-lg btn-block next" type="button">Continue&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="step7">
+                                <h3>Upload Images</h3>
+                                <div class="well">
+                                    <!-- <div class="form-group row">
+                                        <label for="status" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+                                        <div class="col-md-6">
+                                            <select id="status" type="text" class="form-control @error('status') is-invalid @enderror" name="status" value="{{ old('type') }}" required>
+                                                <option value="active">Active</option>
+                                                <option value="passive">Passive</option>
+                                                <option value="off the market">Off the market</option>
+                                            </select>
+                                            @error('status')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div> -->
+                                    <div class="form-group row">
+                                        <label for="banner_image" class="col-md-4 col-form-label text-md-right">{{ __('Select Banner') }}</label>
+
+                                        <div class="col-md-6">
+                                            <input  type="hidden" name="cover_image" id="banner_image">
+                                            <input id="banner_image_drop" type="file" class="form-control @error('banner_image') is-invalid @enderror" value="{{ old('banner_image') }}"  name="banner_image_drop" accept="image/*">
+
+                                            @error('banner_image')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                            <div id="uploaded_banner_image"></div>
+                                        </div>                                                
+                                    </div>
+                                    </form>
+                                    <!-- <div class="form-group row">
+                                        <label for="images" class="col-md-4 col-form-label text-md-right">{{ __('Property Images') }}</label>
+                                        <div class="col-md-6">
+                                            <input  type="hidden" name="images" id="images">
+                                            <input id="property_images_drop" type="file" class="form-control @error('images') is-invalid @enderror" value="{{ old('images') }}"  name="property_images_drop" multiple accept="image/*">
+
+                                            @error('images')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                            <div id="uploaded_product_images"></div>
+                                        </div>
+                                    </div> -->
+                                    <div class="form-group row">
+                                        <label for="images" class="col-md-4 col-form-label text-md-right">{{ __('Property Images') }}</label>
+                                        <div class="col-md-6">
+                                           <form action="#" class="dropzone" name="file" id="my-awesome-dropzone" style="border: 1px solid #ccc; min-height:  200px;">
+                                          @csrf </form>
+                                            <div id="uploaded_product_images"></div>
+                                        </div>
+                                    </div> 
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="">
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-default back" type="button">Back</button>
+                                        </div>
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="">
+                                            <button class="btn btn-success" id="submit" type="submit">Create Unit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div id="push"></div>
+                    <!------------------>
+            </div>
+        </div>
+    </div> 
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="add_unit_custom">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Create Building</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label for="b_address" class="col-md-4 col-form-label text-md-right">{{ __('Address') }}</label>
+                            <input name="b_latitude" id="b_latitude" type="hidden" value="">
+                            <input name="b_longitude" id="b_longitude" type="hidden" value="">
+                            <div class="col-md-6">
+                                <input id="b_autocomplete" type="text" class="form-control @error('b_address') is-invalid @enderror autocomplete" name="address" value="{{ old('b_address') }}" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="b_name" class="col-md-4 col-form-label text-md-right">{{ __('Building  Name') }}</label>
+                            <div class="col-md-6">
+                                <input id="b_name" type="text" class="form-control" name="b_name" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="b_size" class="col-md-4 col-form-label text-md-right">{{ __('Size') }}</label>
+                            <div class="col-md-6">
+                                <input id="b_size" type="text" class="form-control" name="b_size" value="">
+                            </div>
+                        </div>
+                                            
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" id="b_create" class="btn btn-success">Create Building</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="permissionModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="add_unit_custom">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Permissions</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label for="u_address" class="col-md-4 col-form-label text-md-right">{{ __('Unit Permissions') }}</label>
+                            <div class="col-md-6" style="display: flex;">
+                                <input type="radio" name="unit_permission" value="read"> Read
+                                <input type="radio" name="unit_permission" value="write"> Write
+                                <input type="radio" name="unit_permission" value="full"> Full Access
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="u_address" class="col-md-4 col-form-label text-md-right">{{ __('Contract Permissions') }}</label>
+                            <div class="col-md-6" style="display: flex;">
+                                <input type="radio" name="contract_permission" value="read"> Read
+                                <input type="radio" name="contract_permission" value="write"> Write
+                                <input type="radio" name="contract_permission" value="full"> Full Access
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="u_address" class="col-md-4 col-form-label text-md-right">{{ __('Meter Permissions') }}</label>
+                            <div class="col-md-6" style="display: flex;">
+                                <input type="radio" name="meter_permission" value="read"> Read
+                                <input type="radio" name="meter_permission" value="write"> Write
+                                <input type="radio" name="meter_permission" value="full"> Full Access
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" id="p_create" class="btn btn-success">Done Permissions</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="assignModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="add_unit_custom">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Create Property Manager</h3>
+                    </div>
+                    <div class="modal-body">
+                    <input name="assign_to" id="assign_to" type="hidden" value="">
+                        <div class="form-group row">
+                            <label for="u_address" class="col-md-4 col-form-label text-md-right">{{ __('Address') }}</label>
+                            <input name="u_latitude" id="u_latitude" type="hidden" value="">
+                            <input name="u_longitude" id="u_longitude" type="hidden" value="">
+                            <div class="col-md-6">
+                                <input id="u_autocomplete" type="text" class="form-control @error('u_address') is-invalid @enderror autocomplete" name="address" value="{{ old('u_address') }}" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="u_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <div class="col-md-6">
+                                <input id="u_name" type="text" class="form-control" name="u_name" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="u_email" class="col-md-4 col-form-label text-md-right">{{ __('Email') }}</label>
+                            <div class="col-md-6">
+                                <input id="u_email" type="text" class="form-control" name="u_email" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" id="u_create" class="btn btn-success">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addVendorModel" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="add_Vendor_form" action="">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Add New Vendor</h3>
+                    </div>
+                    <div class="modal-body">
+                    <input name="assign_to" id="assign_to" type="hidden" value="">
+                        <div class="form-group row">
+                           <label for="vendor_type" class="col-md-4 col-form-label text-md-right">{{ __('Select Type') }}</label>
+                            <div class="col-md-6">
+                                <select id="vendor_type" class="form-control" name="vendor_type" value="">
+                                        <option value="Locksmith">Locksmith</option>
+                                        <option value="Plumber">Plumber</option>
+                                        <option value="Electrician">Electrician</option>
+                                        <option value="Building Manager">Building Manager</option>
+                                        <option value="Heating">Heating</option>
+                                        <option value="Internet">Internet</option>
+                                        <option value="Insurance">Insurance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vendor_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <div class="col-md-6">
+                                <input id="vendor_name" type="text" class="form-control" name="vendor_name" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vendor_phone_no" class="col-md-4 col-form-label text-md-right">{{ __('Phone No') }}</label>
+                            <div class="col-md-6">
+                                <input id="vendor_phone_no" type="text" class="form-control" name="vendor_phone_no" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vendor_email" class="col-md-4 col-form-label text-md-right">{{ __('Email') }}</label>
+                            <div class="col-md-6">
+                                <input id="vendor_email" type="email" class="form-control" name="vendor_email" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="submit" id="vendor_submit" class="btn btn-success">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="meterModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="create_meter">
+                    @csrf
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Create Meter</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="m_name" class="col-md-4 col-form-label text-md-right">Meter Name</label>
+                        <div class="col-md-6">
+                            <input id="m_name" type="text" class="form-control" name="m_name" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="meter_type" class="col-md-4 col-form-label text-md-right">Meter Type</label>
+                        <div class="col-md-6">
+                            <select id="meter_type" type="text" class="form-control" name="meter_type" value="">
+                                <option value="electric_meter">Electricity Meter</option>
+                                <option value="water_meter">Water Meter</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group row">
+                        <label for="unit_price" class="col-md-4 col-form-label text-md-right">Per Unit Price</label>
+                        <div class="col-md-6">
+                            <input id="unit_price" type="text" class="form-control" name="unit_price" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ean_number" class="col-md-4 col-form-label text-md-right">EAN Number</label>
+                        <div class="col-md-6">
+                            <input id="ean_number" type="text" class="form-control" name="ean_number" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="meter_number" class="col-md-4 col-form-label text-md-right">Meter Number</label>
+                        <div class="col-md-6">
+                            <input id="meter_number" type="text" class="form-control" name="meter_number" value="">
+                        </div>
+                    </div>
+             <!--        <div class="form-group row">
+                        <div class="col-md-12">
+                            <h4>Add Reading</h4>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="meter_doc" class="col-md-4 col-form-label text-md-right">Upload Doc (pdf,xls)</label>
+                        <div class="col-md-6">
+                            <input id="meter_doc" type="file" class="form-control" name="meter_doc" value="" multiple="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="date_of_reading" class="col-md-4 col-form-label text-md-right">Date of Reading</label>
+                        <div class="col-md-6">
+                            <input id="date_of_reading" type="text" class="form-control" name="date_of_reading" value=""> 
+                            <div class="input-group date form_datetime" data-date-format="dd MM, yyyy - HH:ii p" data-link-field="dtp_input1">
+                                <input class="form-control" size="16" name="date_of_reading" type="text" value="" readonly="">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="reading_value" class="col-md-4 col-form-label text-md-right">Reading Value</label>
+                        <div class="col-md-6">
+                            <input id="reading_value" type="text" class="form-control" name="reading_value" value="">
+                        </div>
+                    </div> -->
+                </div>
+                <div class="modal-footer">
+                     <button type="button" id="m_create" class="btn btn-success">Create</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<script>
+    jQuery(document).ready(function(){
+        jQuery('#add_Vendor_form').submit(function(event){
+            event.preventDefault();
+            if(jQuery('#add_Vendor_form').valid()) {
+                var data = JSON.stringify(jQuery('#add_Vendor_form').serializeArray());
+                var data1 = jQuery('#add_Vendor_form').serializeArray();
+                jQuery('#add_vendors').hide();
+                jQuery('#add_vendors_data').show();
+                var htmldata = jQuery('#add_vendors_data').html();
+                jQuery('#add_vendors_data').html(htmldata+'<span>'+data1[2].value+' : '+data1[3].value+'</span>');
+                //console.log(data);
+                var old_data = jQuery('#vandor_data').val();
+                jQuery('#vandor_data').val(old_data.concat(data+','));
+                console.log(jQuery('#vandor_data').val());
+                jQuery('#add_Vendor_form').each(function(){
+                    this.reset();
+                });
+                jQuery('form#add_Vendor_form .close').trigger('click');
+            }
+        });
+        jQuery('#property_images_drop').change(function(){
+            var file_data = $('#property_images_drop').prop('files');   
+            //console.log(file_data);
+            //var images = [];
+            Object.keys(file_data).forEach(function(key) {
+                var form_data = new FormData();                  
+                form_data.append('file', file_data[key]);
+                form_data.append('_token', '<?php echo csrf_token() ?>');
+                //alert(form_data);
+                jQuery.ajax({
+                    url: "{{ url('/property-images') }}",
+                    type: "POST",
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData:false,
+                    success: function(data){
+                        jQuery('#uploaded_product_images').append('<img src="{{ url("/images/property_images")}}/'+data.target_file+'" width="100px">');
+                        var imagesData = jQuery('#images').val();
+                        imagesData = imagesData+data.target_file+",";
+                        jQuery('#images').val(imagesData);
+                    }
+                });
+            });
+        });
+        jQuery('#banner_image_drop').change(function(){
+            var file_data = $('#banner_image_drop').prop('files')[0];   
+            var form_data = new FormData();                  
+            form_data.append('file', file_data);
+            form_data.append('_token', '<?php echo csrf_token() ?>');
+            //alert(form_data);
+            jQuery.ajax({
+                url: "{{ url('/property-images') }}",
+                type: "POST",
+                data: form_data,
+                contentType: false,
+                cache: false,
+                processData:false,
+                success: function(data){
+                    jQuery('#uploaded_banner_image').html('<img src="{{ url("/images/property_images")}}/'+data.target_file+'" width="100px">');
+                    jQuery('#banner_image').val(data.target_file);
+                }
+            });
+        });
+    });
+    jQuery('#create_propert_form').validate({
+        errorClass:"red",
+        validClass:"green",
+        rules:{                  
+            title:{
+                required:true,
+            },
+            address:{
+                required:true,
+            },
+            area:{
+                required:true,
+                number:true
+            },
+            description:{
+                required:true,
+            },
+            banner_image_drop:{
+                required:true,
+            },
+            building_id:{
+                required:true,
+            },
+            max_age: {
+                required: true,
+                min: function() {
+                    return parseInt($('#min_age').val());
+                }
+            },
+            min_age: {
+                required: true,
+                max: function() {
+                    return parseInt($('#max_age').val());
+                }
+            }
+        }      
+    });
+
+    jQuery('#add_Vendor_form').validate({
+        errorClass:"red",
+        validClass:"green",
+        rules:{                  
+            vendor_name:{
+                required:true,
+            },
+            vendor_phone_no:{
+                required:true,
+                number:true
+            },
+            vendor_email:{
+                required:true,
+                email:true
+            }
+        }      
+    });
+
+</script>
+<script type="text/javascript">
+    $("#submit").click(function(){
+        $("#create_propert_form").submit();
+    });
+    var date = new Date();
+    $('.form_datetime').datetimepicker({
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        forceParse: 0,
+        showMeridian: 1,
+        startDate: date
+    });
+    $('#b_create').click(function(){
+        var b_name = $('#b_name').val();
+        var html = '<option value="'+b_name+'">'+b_name+'</option>'; 
+        $('#building_id').append(html);
+        $('#myModal').modal('hide');
+        $('#assignModal').find('form').trigger('reset');
+    });
+    $('#p_create').click(function(){
+        var p_name = $('#p_name').val();
+        $('#permissionModal').modal('hide');
+        // $('#permissionModal').find('form').trigger('reset');
+    });
+    $('#m_create').click(function(){
+        var m_name = $('#m_name').val();
+        var html = '<option value="'+m_name+'">'+m_name+'</option>'; 
+        $('#meter_id').append(html);
+        $('#meterModal').modal('hide');
+        $('#meterModal').find('form').trigger('reset');
+    });
+    $('#u_create').click(function(){
+        var u_name = $('#u_name').val();
+        var assign_to = $('#assign_to').val();
+        var html = '<option value="'+u_name+'">'+u_name+'</option>'; 
+        if(assign_to == 3)
+         {
+            $('#property_id').append(html);
+         }
+         else if(assign_to == 4)
+         {
+            $('#property_description_experts_id').append(html);
+         }
+         else if(assign_to == 5)
+         {
+            $('#property_legal_advisor_id').append(html);
+         }
+         else if(assign_to == 6)
+         {
+            $('#property_visit_organizer_id').append(html);
+         }
+        $('#assignModal').modal('hide');
+        $('#assignModal').find('form').trigger('reset');
+    });
+    $(document).on("click", ".open-assignModal", function () {
+         var assign_to = $(this).data('id');
+         $(".modal-body #assign_to").val( assign_to );
+         if(assign_to == 3)
+         {
+            $('#assignModal .modal-title').text('Create Property Manager');
+            var html = '<option value="'+b_name+'">'+b_name+'</option>'; 
+            $('#building_id').append(html);
+            $('#myModal').modal('hide');
+         }
+         else if(assign_to == 4)
+         {
+            $('#assignModal .modal-title').text('Create Property Description Experts');
+         }
+         else if(assign_to == 5)
+         {
+            $('#assignModal .modal-title').text('Create Legal Advisor');
+         }
+         else if(assign_to == 6)
+         {
+            $('#assignModal .modal-title').text('Create Visit Organizer');
+         }
+         // As pointed out in comments, 
+         // it is unnecessary to have to manually call the modal.
+         // $('#addBookDialog').modal('show');
+    });
+    $('#p_type').change(function(){
+        var type = $('#p_type').val();
+        if(type == 'unit'){
+            $('[href="#step3"]').css('pointerEvents',"auto");
+            $('[href="#step4"]').css('pointerEvents',"auto");
+            // $('[href="#step3"]').css('cursor',"pointer");
+        }
+        else{
+            $('[href="#step3"]').css('pointerEvents',"none");
+            $('[href="#step4"]').css('pointerEvents',"none");
+            // $('[href="#step3"]').css('cursor',"default");
+        }
+    });
+</script>
+<script type="text/javascript">
+    $('.next').click(function(){
+        var type = $('#p_type').val();
+        if(type == 'unit'){
+            var nextId = $(this).parents('.tab-pane').next().attr("id");
+        }
+        else{
+            var id = $(this).parents('.tab-pane').attr("id");
+            if(id == 'step2')
+            {     
+                var nextId = $(this).parents('.tab-pane').next().next().next().attr("id");  
+            }
+            else
+            {
+                var nextId = $(this).parents('.tab-pane').next().attr("id");
+            }
+        }
+        $('[href="#' + nextId + '"]').tab('show');
+        return false;
+    });
+    $('.back').click(function(){
+        var type = $('#p_type').val();
+        if(type == 'unit'){
+            var prevId = $(this).parents('.tab-pane').prev().attr("id");
+        }
+        else{
+            var id = $(this).parents('.tab-pane').attr("id");
+            if(id == 'step5')
+            {     
+                var prevId = $(this).parents('.tab-pane').prev().prev().prev().attr("id");
+            }
+            else
+            {
+                var prevId = $(this).parents('.tab-pane').prev().attr("id");
+            }
+        }
+        $('[href="#'+prevId+'"]').tab('show');
+        return false;
+    });
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      //update progress
+      var step = $(e.target).data('step');
+      var percent = (parseInt(step) / 7) * 100;
+      $('.progress-bar').css({width: percent + '%'});
+      $('.progress-bar').text("Step " + step + " of 7");
+      //e.relatedTarget // previous tab
+    });
+    $('.first').click(function(){
+      $('#myWizard a:first').tab('show')
+    });
+
+(function() {
+  var $,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  $ = jQuery;
+
+  $.fn.validateCreditCard = function(callback, options) {
+    var bind, card, card_type, card_types, get_card_type, is_valid_length, is_valid_luhn, normalize, validate, validate_number, _i, _len, _ref;
+    card_types = [
+      {
+        name: 'amex',
+        pattern: /^3[47]/,
+        valid_length: [15]
+      }, {
+        name: 'diners_club_carte_blanche',
+        pattern: /^30[0-5]/,
+        valid_length: [14]
+      }, {
+        name: 'diners_club_international',
+        pattern: /^36/,
+        valid_length: [14]
+      }, {
+        name: 'jcb',
+        pattern: /^35(2[89]|[3-8][0-9])/,
+        valid_length: [16]
+      }, {
+        name: 'laser',
+        pattern: /^(6304|670[69]|6771)/,
+        valid_length: [16, 17, 18, 19]
+      }, {
+        name: 'visa_electron',
+        pattern: /^(4026|417500|4508|4844|491(3|7))/,
+        valid_length: [16]
+      }, {
+        name: 'visa',
+        pattern: /^4/,
+        valid_length: [16]
+      }, {
+        name: 'mastercard',
+        pattern: /^5[1-5]/,
+        valid_length: [16]
+      }, {
+        name: 'maestro',
+        pattern: /^(5018|5020|5038|6304|6759|676[1-3])/,
+        valid_length: [12, 13, 14, 15, 16, 17, 18, 19]
+      }, {
+        name: 'discover',
+        pattern: /^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)/,
+        valid_length: [16]
+      }
+    ];
+    bind = false;
+    if (callback) {
+      if (typeof callback === 'object') {
+        options = callback;
+        bind = false;
+        callback = null;
+      } else if (typeof callback === 'function') {
+        bind = true;
+      }
+    }
+    if (options == null) {
+      options = {};
+    }
+    if (options.accept == null) {
+      options.accept = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = card_types.length; _i < _len; _i++) {
+          card = card_types[_i];
+          _results.push(card.name);
+        }
+        return _results;
+      })();
+    }
+    _ref = options.accept;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      card_type = _ref[_i];
+      if (__indexOf.call((function() {
+        var _j, _len1, _results;
+        _results = [];
+        for (_j = 0, _len1 = card_types.length; _j < _len1; _j++) {
+          card = card_types[_j];
+          _results.push(card.name);
+        }
+        return _results;
+      })(), card_type) < 0) {
+        throw "Credit card type '" + card_type + "' is not supported";
+      }
+    }
+    get_card_type = function(number) {
+      var _j, _len1, _ref1;
+      _ref1 = (function() {
+        var _k, _len1, _ref1, _results;
+        _results = [];
+        for (_k = 0, _len1 = card_types.length; _k < _len1; _k++) {
+          card = card_types[_k];
+          if (_ref1 = card.name, __indexOf.call(options.accept, _ref1) >= 0) {
+            _results.push(card);
+          }
+        }
+        return _results;
+      })();
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        card_type = _ref1[_j];
+        if (number.match(card_type.pattern)) {
+          return card_type;
+        }
+      }
+      return null;
+    };
+    is_valid_luhn = function(number) {
+      var digit, n, sum, _j, _len1, _ref1;
+      sum = 0;
+      _ref1 = number.split('').reverse();
+      for (n = _j = 0, _len1 = _ref1.length; _j < _len1; n = ++_j) {
+        digit = _ref1[n];
+        digit = +digit;
+        if (n % 2) {
+          digit *= 2;
+          if (digit < 10) {
+            sum += digit;
+          } else {
+            sum += digit - 9;
+          }
+        } else {
+          sum += digit;
+        }
+      }
+      return sum % 10 === 0;
+    };
+    is_valid_length = function(number, card_type) {
+      var _ref1;
+      return _ref1 = number.length, __indexOf.call(card_type.valid_length, _ref1) >= 0;
+    };
+    validate_number = (function(_this) {
+      return function(number) {
+        var length_valid, luhn_valid;
+        card_type = get_card_type(number);
+        luhn_valid = false;
+        length_valid = false;
+        if (card_type != null) {
+          luhn_valid = is_valid_luhn(number);
+          length_valid = is_valid_length(number, card_type);
+        }
+        return {
+          card_type: card_type,
+          valid: luhn_valid && length_valid,
+          luhn_valid: luhn_valid,
+          length_valid: length_valid
+        };
+      };
+    })(this);
+    validate = (function(_this) {
+      return function() {
+        var number;
+        number = normalize($(_this).val());
+        return validate_number(number);
+      };
+    })(this);
+    normalize = function(number) {
+      return number.replace(/[ -]/g, '');
+    };
+    if (!bind) {
+      return validate();
+    }
+    this.on('input.jccv', (function(_this) {
+      return function() {
+        $(_this).off('keyup.jccv');
+        return callback.call(_this, validate());
+      };
+    })(this));
+    this.on('keyup.jccv', (function(_this) {
+      return function() {
+        return callback.call(_this, validate());
+      };
+    })(this));
+    callback.call(this, validate());
+    return this;
+  };
+
+}).call(this);
+</script>
+<style type="text/css">
+    div#add_vendors span ,div#add_vendors_data span{border: 1px solid #ccc; padding: 5px; margin: 0 5px; }
+</style>
+@endsection

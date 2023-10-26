@@ -1,0 +1,288 @@
+@section('title','Legal Actions')
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner', ['banner_text' => 'Legal Actions'])
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 top-nevigation" >
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="tenent-title">List All Legal Actions</div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="add-unit-main">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateModel">Create Legal Actions <span class="glyphicon glyphicon-plus"></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="termination" class="tab-pane fade in active">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div  class="user-info-table">
+                                <table  class="table table-hover table-striped table-bordered" id="list_of_transacions">
+                                    <thead>
+                                        <tr>
+                                            <td >Unit Name</td>
+                                            <td >Tenent Name</td>
+                                            <td >Legal Advisor </td>
+                                            <!-- <td >Contract</td> -->
+                                            <td >Due Amount </td>
+                                            <td >Comment </td>
+                                            <td >Action</td>
+                                        </tr> 
+                                    </thead>   
+                                    <tbody >         
+                                        <tr>
+                                            <td><a target="_blank" href="{{ url('propertydetails/23') }}">po1...</a></td>
+                                            <td ><a target="_blank" href="{{ url('tenant-details/1') }}">John</a></td>
+                                            <td >Legal</td>
+                                            <!-- <td ><a target="_blank" href="{{url('contract-details/2')}}">Residential</a> </td> -->
+                                            <td >$ 300</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</td>
+                                            <td >
+                                                <a href="#"><span title="View" class="glyphicon glyphicon-eye-open"></span></a>
+                                                <a data-toggle="modal" data-target="#extend"><span title="Legal Action" class="glyphicon glyphicon-edit"></span></a>
+                                            </td>
+                                        </tr> 
+                                        <tr>
+                                            <td><a target="_blank" href="{{ url('propertydetails/23') }}">po1...</a></td>
+                                            <td ><a target="_blank" href="{{ url('tenant-details/1') }}">John</a></td>
+                                            <td >Legal</td>
+                                            <!-- <td ><a target="_blank" href="{{url('contract-details/2')}}">Residential</a> </td> -->
+                                            <td >$ 300</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</td>
+                                            <td ><a href="#"><span title="View" class="glyphicon glyphicon-eye-open"></span></a>
+                                            <a data-toggle="modal" data-target="#extend"><span title="Legal Action" class="glyphicon glyphicon-edit"></span></a></td>
+                                        </tr> 
+                                        <tr>
+                                            <td><a target="_blank" href="{{ url('propertydetails/23') }}">po1...</a></td>
+                                            <td ><a target="_blank" href="{{ url('tenant-details/1') }}">John</a></td>
+                                            <td >Legal</td>
+                                            <!-- <td ><a target="_blank" href="{{url('contract-details/2')}}">Residential</a> </td> -->
+                                            <td >$ 300</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</td>
+                                            <td ><a href="#"><span title="View" class="glyphicon glyphicon-eye-open"></span></a>
+                                            <a data-toggle="modal" data-target="#extend"><span title="Legal Action" class="glyphicon glyphicon-edit"></span></a></td>
+                                        </tr>  
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--                 <div id="refunds" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div  class="user-info-table">
+                                <table  class="table table-hover table-striped table-bordered" id="list_of_transacions">
+                                    <thead>
+                                        <tr>
+                                            <td >Tenent Name</td>
+                                            <td >Contract</td>
+                                            <td >Refund Date</td>
+                                            <td >Related to</td>
+                                            <td >Amount</td>
+                                            <td >Action</td>
+                                        </tr> 
+                                    </thead>   
+                                    <tbody >         
+                                        <tr>
+                                            <td >Bright</td>
+                                            <td ><a href="{{url('contract-details/2')}}">Residential</a> </td>
+                                            <td > 07 September, 2020 - 10:35 am</td>
+                                            <td >Rent</td>
+                                            <td >$1200</td>
+                                            <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr>  
+                                        <tr>
+                                            <td >Bright</td>
+                                            <td ><a href="{{url('contract-details/2')}}">Residential</a> </td>
+                                            <td > 07 September, 2020 - 10:35 am</td>
+                                            <td >Rent</td>
+                                            <td >$1200</td>
+                                            <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr>  
+                                        <tr>
+                                            <td >Bright</td>
+                                            <td ><a href="{{url('contract-details/2')}}">Residential</a> </td>
+                                            <td > 07 September, 2020 - 10:35 am</td>
+                                            <td >Rent</td>
+                                            <td >$1200</td>
+                                            <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr>  
+                                        <tr>
+                                            <td >Bright</td>
+                                            <td ><a href="{{url('contract-details/2')}}">Residential</a> </td>
+                                            <td > 07 September, 2020 - 10:35 am</td>
+                                            <td >Rent</td>
+                                            <td >$1200</td>
+                                            <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr>                
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tickets" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div  class="user-info-table">
+                                <table  class="table table-hover table-striped table-bordered" id="list_of_transacions">
+                                    <thead>
+                                        <tr>
+                                            <td >Title</td>
+                                            <td >Description</td>
+                                            <td >Department</td>
+                                            <td >Status</td>
+                                            <td >Action</td>
+                                        </tr> 
+                                    </thead>   
+                                    <tbody >         
+                                        <tr>
+                                            <td >Title</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry</td>
+                                            <td >Plumbing</td>
+                                            <td >Closed</td>
+                                            <td ><a href="{{url('ticket-view')}}"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr> 
+                                        <tr>
+                                            <td >Title</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry</td>
+                                            <td >Electricity</td>
+                                            <td >Pending</td>
+                                            <td ><a href="{{url('ticket-view')}}"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr> 
+                                        <tr>
+                                            <td >Title</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry</td>
+                                            <td >Insurance</td>
+                                            <td >Pending</td>
+                                            <td ><a href="{{url('ticket-view')}}"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr> 
+                                        <tr>
+                                            <td >Title</td>
+                                            <td >Lorem Ipsum is simply dummy text of the printing and typesetting industry</td>
+                                            <td >Electricity</td>
+                                            <td >Closed</td>
+                                            <td ><a href="{{url('ticket-view')}}"><span title="Delete" class="glyphicon glyphicon-eye-open"></span></a></td>
+                                        </tr> 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>  
+</div>
+<div class="modal fade" id="updateModel" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Legal Action</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{{ url('/create-legal-action') }}" id="create_tenant_form">
+                    @csrf
+                    <div class="form-group row">
+                        <label for="unit_id" class="col-md-4 col-form-label text-md-right">Select Unit</label>
+                        <div class="col-md-6">
+                            <select name="unit_id" id="unit_id" class="form-control green" aria-invalid="false">
+                                <option value="">Select Unit</option>
+                                <option value="1">test 1234</
+                                <option value="194">r </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tenant_id" class="col-md-4 col-form-label text-md-right">Tenant</label>
+                        <div class="col-md-6">
+                            <select name="tenant_id" id="tenant_id" class="form-control green" aria-invalid="false">
+                                <option value="">Select Tenant</option>
+                                <option value="1">test 1234</
+                                <option value="194">r </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="legal_advisor_id" class="col-md-4 col-form-label text-md-right">Legal Advisor</label>
+                        <div class="col-md-6">
+                            <select name="legal_advisor_id" id="legal_advisor_id" class="form-control green" aria-invalid="false">
+                                <option value="">Select Legal Advisor</option>
+                                <option value="1">test 1234</
+                                <option value="194">r </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="due_amount" class="col-md-4 col-form-label text-md-right">Due Amount</label>
+                        <div class="col-md-6">
+                            <input type="text" name="due_amount" class="form-control green" aria-invalid="false">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="comment" class="col-md-4 col-form-label text-md-right">Comment</label>
+                        <div class="col-md-6">
+                            <textarea name="comment" class="form-control green" aria-invalid="false"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <button type="submit" id="create_tenant_button"class="btn btn-success">Create Action</button>
+                        </div>
+                    </div>
+                </form>
+            </div>   
+        </div>          
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery('#create_tenant_form').validate({
+        errorClass:"red",
+        validClass:"green",
+        rules:{
+            unit_id:{
+                required:true,
+            },
+            tenant_id:{
+                required:true,
+            },            
+            legal_advisor_id:{
+                required:true,
+            },
+            due_amount:{
+                required:true,
+                number:true
+            },
+            comment:{
+                required:true,
+            }
+        }
+    });
+</script>
+<style type="text/css">
+    .error-message{color: #fff; background-color: red; padding: 5px; margin: 5px 0; }
+    .unit-body {border: 2px solid #f28401; padding: 15px; margin: 15px 0; border-radius: 5px; }
+    .unit_number {font-size: 18px; }
+    .unit-body span { font-weight: bold;  }
+    .unit {padding: 5px 0; }
+    .top-nevigation {padding-bottom: 25px; }
+    ul.nav.nav-tabs {border: 0; }
+    .top-nevigation li {border: 0 !important; padding: 0 6px; }
+    /*.top-nevigation a {border: 0 !important; background-color: #fae4c4; color: inherit; }*/
+    .top-nevigation li.active a {background: #f28302; color: #fff; }
+    .add-unit-main {text-align: right;     padding: 15px 0; }
+    .unit-delete span {color: #000000bd; position: relative; float: right; }
+    .Current_Active_Contract {font-size: 24px; text-align: center; }
+    .documemt_action {text-align: right; }
+    .documemt_action a {color: #000000bd; padding: 0 5px; }
+    .contract-alert {background-color: bisque; padding: 9px; margin: 8px; border-radius: 5px; }
+    .contract-alert-title {font-size: 24px; }
+    .tenent-title {font-size: 24px; padding: 15px 0; }
+</style>
+@endsection

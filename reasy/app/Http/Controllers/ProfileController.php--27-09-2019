@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\User;
+class ProfileController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index(request $request){
+        if (Auth::check()) {
+            $user = Auth::user();
+            $data = array('user'=>$user);
+            return view('dashboard.profile')->with($data);
+        }
+    }
+    public function editprofile(request $request){
+        if (Auth::check()) {
+            $user = Auth::user();
+            $data = array('user'=>$user);
+            return view('dashboard.editprofile')->with($data);
+        }
+    }
+    public function updateprofile(Request $request){
+        $user = Auth::user();
+        $data = $this->validate(request(), [
+                    'id'=>'required',
+                    'name'=> 'required',
+                    'last_name'=> 'required',
+                    'gender'=> 'required',
+                    'phone_no'=> 'required|numeric',
+                    'email'=>'required|email',
+                    'image.*' => 'mimes:jpeg,png,jpg,gif,svg|max:2048',
+                ]);
+        $imageName = $user->image;
+        if($image=$request->file('image')){
+            $imageName = time().'.'.request()->image->getClientOriginalExtension();
+            request()->image->move(public_path('images/users'), $imageName);
+            //$image->move($destinationPath,$image->getClientOriginalName());
+        }
+        $user->name = request('name'); 
+        $user->last_name = request('last_name'); 
+        $user->gender = request('gender'); 
+        $user->phone_no = request('phone_no'); 
+        $user->email = request('email');
+        $user->image = $imageName;
+        $user->postal = request('postal');
+        $user->nr = request('nr');
+        $user->postal_code = request('postal_code');
+        $user->city = request('city');
+        $user->id_card = request('id_card');
+        $user->professional_status = request('professional_status');
+        $user->school_company_name = request('school_company_name');
+        $user->tenant_type = request('tenant_type');
+        
+        $user->company_name = request('company_name');
+        $user->company_address = request('company_address');
+        $user->vat_nr = request('vat_nr');
+        $user->registration_number = request('registration_number');
+        $user->bank_account_number = request('bank_account_number');
+        $user->save();
+
+        return redirect('/profile');
+    }
+
+    public function purchaseview(request $request){ 
+        return view('dashboard.purchasemembership');
+    }
+
+    public function dashboard(request $request){ 
+        return view('dashboard.dashboard');
+    }
+}

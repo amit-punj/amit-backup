@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\User;
+use App\Plans;
+use App\Properties;
+use App\Invitations;
+use Illuminate\Support\Facades\Hash;
+class InvitationController extends Controller
+{
+    protected $url;
+    public function __construct(UrlGenerator $url){
+        //$this->middleware('auth');
+        $this->url = $url;
+    }
+
+    public function sendMail(Request $request){
+        $token = hash('sha256', Str::random(60));
+        $url = $this->url->to('/')."/create-invitation-user?access-token=".$token;       
+        $invitation = new Invitations;
+        $invitation->user_role = $request->input('user_role');
+        $invitation->name = $request->input('name');
+        $invitation->token = $token;
+        $invitation->email = $request->input('email');
+        $invitation->message = $request->input('message');
+        $invitation->user_id = Auth::id();
+        $invitation->save();
+
+        /************************/
+        // Url for Email
+        // $url
+        $to_name = $request->input('name');
+        $to_email = $request->input('email');
+        $data = array('name'=>$request->input('name'), "email" => $request->input('email'),"url"=>$url);
+            
+        Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)
+                    ->subject('Invitations from Reasy Properties');
+            $message->from('malkeetvisionvivante@gmail.com','Reasy Property');
+        });
+
+        return back()->with('message', 'Mail Sent Successfully!');
+    }
+
+    public function createInvitationUser(Request $request){
+       $request->input('access-token');
+       $email = DB::table('invitations')->where('token', $request->input('access-token'))->value('email');
+       $name =  DB::table('invitations')->where('token', $request->input('access-token'))->value('name');
+       $user_role =  DB::table('invitations')->where('token', $request->input('access-token'))->value('user_role');
+       return view('auth.invitation')->with(['email'=>$email,'name'=>$name, 'user_role'=> $user_role]);
+    }
+
+    public function registerInvitationUser(Request $request){
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'user_role' => ['required'],
+        ]); 
+        User::create([
+            'name' => $request->input('name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'user_role' => $request->input('user_role'),
+            'password' => Hash::make($request->input('password')),
+        ]);
+        Auth::logout();
+        return redirect('/login')->with('message', 'User Created Successfully, Please login here!');
+    }
+}

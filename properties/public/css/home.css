@@ -1,0 +1,494 @@
+.header-margin-top{
+	margin-top: 10px;
+}
+.logo{
+	width: 80%; float: left;
+	margin-top: 7px;
+}
+.btn1{
+	margin-top: 10px; 
+}
+.carousel-item{
+background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('imgs/pexels-photo-186077.jpeg');
+               min-height: 400px; background-size: cover;"
+}
+.sliderone-text{
+	color: white;text-align: center;font-size: 29px;font-weight: bold; margin-top: 11%; margin-right: 15px; margin-left: 15px;
+}
+.text2{
+	color: white; text-align: center;  margin-right: 11%; margin-left: 11%; font-size: 17px;
+}
+.text3{
+	color: #fff; text-align: center; margin-right: 20px; margin-left: 20px;
+}
+.margintop{ margin-top: 3%; }
+.searchbar{
+	color: white; background-color: #0e2a60; display: flex; height: 100px;
+}
+.slider2{
+	background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('imgs/images (2).jpeg');
+}
+.slider2text{
+	color: white;text-align: center;font-size: 23px;font-weight: bold; margin-top: 5%; 
+}
+.slider3{
+	background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('imgs/pexels-photo-186077.jpeg');
+}
+.video{
+	margin-top: 5%;
+}
+.section{
+	margin-top: 9%;
+}
+.testmonialimg{
+	margin-top: 4%;
+}
+.imgborder{
+	border-radius: 50%;
+}
+.footer{
+	margin-top: 7%;
+	background-color: #040404;
+}
+.footersection{
+width: 20%; padding: 2%; 
+}
+.footerheadings{
+	color: white;
+	margin-top: 14px;
+}
+.line{
+	margin-top: -12px;
+	color: white;
+
+}
+a.dropdown-item:hover {
+    background-color: #5fb33a;
+    color: #fff;
+}
+.table-dark {
+  background-color: #0e2a60 !important;
+}
+.links a{
+color: white; font-size: 14px;
+}
+.socialmedialink a{
+margin-right: 12px;
+color: white;
+}
+.socialmedialink{
+/*margin-left: -41px;*/
+list-style: none; display: flex; color: white;
+
+}
+.gmail{
+	color: white;
+}
+.footerlast-sec{
+	background-color: #000000;
+	color: white;
+	padding: 2%;
+}
+.agentconnect-color{
+	color: green;
+}
+.iframevideo{
+  height: 300px;
+  width: 600px;
+}
+/*login or signup*/
+#logreg-forms{
+    width:412px;
+    margin:10vh auto;
+    background-color:#f3f3f3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+#logreg-forms form {
+    width: 100%;
+    max-width: 410px;
+    padding: 15px;
+    margin: auto;
+}
+#logreg-forms .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+#logreg-forms .form-control:focus { z-index: 2; }
+#logreg-forms .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+#logreg-forms .form-signin input[type="password"] {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#logreg-forms .social-login{
+    width:390px;
+    margin:0 auto;
+    margin-bottom: 14px;
+}
+#logreg-forms .social-btn{
+    font-weight: 100;
+    color:white;
+    width:190px;
+    font-size: 0.9rem;
+}
+
+#logreg-forms a{
+    display: block;
+    padding-top:10px;
+    color:#28a745;
+}
+
+#logreg-form .lines{
+    width:200px;
+    border:1px solid red;
+}
+
+
+#logreg-forms button[type="submit"]{ margin-top:10px; }
+
+#logreg-forms .facebook-btn{  background-color:#3C589C; }
+
+#logreg-forms .google-btn{ background-color: #DF4B3B; }
+
+#logreg-forms .form-reset, #logreg-forms .form-signup{ display: none; }
+
+#logreg-forms .form-signup .social-btn{ width:210px; }
+
+#logreg-forms .form-signup input { margin-bottom: 2px;}
+
+.form-signup .social-login{
+    width:210px !important;
+    margin: 0 auto;
+}
+input.btnSubmit {
+    width: 39%;
+}
+.membership-option{
+    margin-top: 5%;
+    float: right;
+    margin-right: -11%;
+    color: green;
+    font-weight: 600;
+    font-size: 15px;
+}
+.check-icon{
+  color: green; font-size: 18px
+}
+
+/* Mobile */
+
+@media screen and (max-width:500px){
+    #logreg-forms{
+        width:300px;
+    }
+    
+    #logreg-forms  .social-login{
+        width:200px;
+        margin:0 auto;
+        margin-bottom: 10px;
+    }
+    #logreg-forms  .social-btn{
+        font-size: 1.3rem;
+        font-weight: 100;
+        color:white;
+        width:200px;
+        height: 56px;
+        
+    }
+    #logreg-forms .social-btn:nth-child(1){
+        margin-bottom: 5px;
+    }
+    #logreg-forms .social-btn span{
+        display: none;
+    }
+    #logreg-forms  .facebook-btn:after{
+        content:'Facebook';
+    }
+  
+    #logreg-forms  .google-btn:after{
+        content:'Google+';
+    }
+}
+
+/*media query*/
+@media screen and (max-width: 1024px){
+.footersection{
+      width: 100%;
+      text-align: center;
+  }
+  .socialmedialink {
+    float: none;
+  display: -webkit-inline-box;
+  }
+  .iframevideo{
+  height: 400px !important;
+  width: 900px !important;
+}
+  
+}
+@media screen and (max-width: 823px){
+ .iframevideo{
+  height: 400px !important;
+  width: 691px !important;
+}
+input.btnSubmit {
+    width: 61%;
+}
+}
+@media screen and (max-width: 768px){
+.iframevideo{
+  height: 300px !important;
+  width: 600px !important;
+}
+.logintext {
+    margin-left: 22%;
+    margin-right: 35%;
+}
+.signuptext{
+  margin-left: 19%;
+    margin-right: 35%;
+}
+.membership-option{
+      margin-right: -14%;
+}
+}
+@media screen and (max-width: 736px){
+  .col-md-4.col-xs-4.flex-button{
+    display: flex;
+    margin-left: 58%;
+    margin-top: -8%;
+  }
+.flex-button {
+    width: 85% !important;
+    margin-left: 7%;
+}
+.logintext{
+  margin-left: 29%;
+  margin-right: 35%;
+}
+.signuptext{
+   margin-left: 28%;
+  margin-right: 35%;
+}
+.logo{
+  width: 33%;
+}
+.iframevideo{
+  height: 300px !important;
+  width: 519px !important;
+}
+.membership-option {
+    margin-top: -5%;
+    margin-right: 8%;
+    font-size: 11px;
+    float: unset;
+  }
+  .check-icon{
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 731px){
+.iframevideo{
+  height: 300px !important;
+  width: 516px !important;
+}
+}
+@media screen and (max-width: 667px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 300px !important;
+  width: 518px !important;
+}
+
+}
+@media screen and (max-width: 640px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 300px !important;
+  width: 524px !important;
+}
+.logintext{
+  margin-left: 30%;
+  margin-right: 35%;
+}
+.signuptext{
+   margin-left: 25%;
+  margin-right: 35%;
+}
+
+}
+@media screen and (max-width: 568px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.logintext{
+  margin-left: 26%;
+  }
+  .signuptext{
+   margin-left: 23%;
+}
+.iframevideo{
+  height: 200px !important;
+  width: 400px !important;
+}
+
+} 
+@media screen and (max-width: 533px){
+ .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+   margin-left: 5% !important;
+    margin-top: unset !important;
+}
+.membership-option{
+  margin-top: 5%;
+} 
+.iframevideo{
+  height: 200px !important;
+  width: 400px !important;
+}
+.logo{
+  margin-left: 9%;
+  width: 85% !important;
+}
+.logintext{
+  margin-left: 38%;
+  }
+.signuptext{
+   margin-left: 34%;
+} 
+
+
+}
+@media screen and (max-width: 480px){
+  .membership-option{
+    float: unset;
+    margin-right: 19px;
+  }
+  input#btnsub{
+    width: 55% !important;
+  }
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 200px !important;
+  width: 400px !important;
+}
+.logintext{
+  margin-left: 40%;
+  margin-right: 35%;
+}
+.signuptext{
+   margin-left: 34%;
+  margin-right: 35%;
+}
+
+
+}
+@media screen and (max-width: 414px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 200px !important;
+  width: 300px !important;
+}
+.logintext{
+  margin-left: 35%;
+}
+.signuptext{
+   margin-left: 32%;
+}
+.membership-option{
+margin-top: 5%;
+font-size: 15px
+  }
+}
+@media screen and (max-width: 411px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 200px !important;
+  width: 300px !important;
+}
+.logintext{
+  margin-left: 34%;
+  margin-right: 35%;
+}
+.signuptext{
+   margin-left: 32%;
+  margin-right: 35%;
+}
+
+
+}
+@media screen and (max-width: 375px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 150px !important;
+  width: 250px !important;
+}
+
+
+}
+@media screen and (max-width: 360px){
+  .flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 150px !important;
+  width: 250px !important;
+}
+.logintext{
+  margin-left: 34%;
+  margin-right: 35%;
+}
+.signuptext{
+   margin-left: 28%;
+  margin-right: 35%;
+}
+
+}
+@media screen and (max-width: 320px){
+.logintext {
+    margin-left: 30%;
+    margin-right: 35%;
+}
+.signuptext{
+  margin-left: 24%;
+    margin-right: 35%;
+}
+.flex-button {
+  width: 85% !important;
+   margin-left: 7%;
+}
+.iframevideo{
+  height: 150px !important;
+  width: 250px !important;
+}
+ 
+}

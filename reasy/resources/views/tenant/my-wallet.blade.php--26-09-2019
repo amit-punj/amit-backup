@@ -1,0 +1,181 @@
+@section('title','Payments')
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner', ['banner_text' => 'Payments'])
+    <div class="container bootom-space">
+        <div class="row">
+            <div class="col-md-12">
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                        {!! implode('', $errors->all('<div class="error-message">:message</div>')) !!}
+                @endif
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-hover table-striped table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td class="unit" ><span>Amount : </span></td>
+                                    <td>$ 320</td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span>Upcoming payment duw date : </span></td>
+                                    <td>2019-08-23</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-4">
+                        <!-- <div  class="col-md-2">
+                            <i class="fa fa-exclamation-triangle" style="font-size: 60px; color: red;" aria-hidden="true"></i>
+                        </div> -->
+                        <div class="col-md-10">
+                            <table class="table table-hover table-striped table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="4" class="unit" colspan="2" ><i class="fa fa-exclamation-triangle" style="font-size: 80px;margin-top: 10px; color: red;" aria-hidden="true"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="unit" colspan="2" ><span>Late Payment</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="unit" ><span>Due date : </span></td>
+                                        <td>2019-08-23</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="unit" ><span>Amount : </span></td>
+                                        <td>$ 320</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="float-right">
+                            <a class="btn btn-success" data-toggle="modal" data-target="#book_unit">Add Money</a>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="Building-Units">Payment History</div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-sm-12">
+                <div  class="user-info-table">
+                    <table  class="table table-hover table-striped table-bordered" id="list_of_transacions">
+                        <thead>
+                            <tr>
+                                <td >S.No</td>
+                                <td >Date</td>
+                                <td >Related to</td>
+                                <td >Status</td>
+                                <td >Amount</td>
+                                <!-- <td >Manually/Automatically</td> -->
+                                <!-- <td >Action</td> -->
+                            </tr> 
+                        </thead>   
+                        <tbody >         
+                            <tr>
+                                <td >1</td>
+                                <td > 07 September, 2020 - 10:35 am</td>
+                                <td >Added to Wallet from Bank Transfer</td>
+                                <td >Credit</td>
+                                <td >$1200</td>
+                                <!-- <td >Manually</td> -->
+                                <!-- <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-trash"></span></a></td> -->
+                            </tr>  
+                            <tr>
+                                <td >2</td>
+                                <td > 07 September, 2019 - 10:35 am</td>
+                                <td >Paid for Water Bill <a href="{{ url('contract-details/2') }}">Contrat Classic</a></td>
+                                <td >Debit</td>
+                                <td >$1200</td>
+                                <!-- <td >Manually</td> -->
+                                <!-- <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-trash"></span></a></td> -->
+                            </tr>  
+                            <tr>
+                                <td >3</td>
+                                <td > 07 September, 2019 - 10:35 am</td>
+                                <td >Paid for Rent <a href="{{ url('contract-details/2') }}">Contrat Classic</a></td>
+                                <td >Debit</td>
+                                <td >$1200</td>
+                                <!-- <td >Manually</td> -->
+                                <!-- <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-trash"></span></a></td> -->
+                            </tr>  
+                            <tr>
+                                <td >4</td>
+                                <td > 07 September, 2019 - 10:35 am</td>
+                                <td >Added to Wallet from Paypal</td>
+                                <td >Credit</td>
+                                <td >$12000</td>
+                                <!-- <td >Manually</td> -->
+                                <!-- <td ><a href="#"><span title="Delete" class="glyphicon glyphicon-trash"></span></a></td> -->
+                            </tr>                
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="modal fade" id="book_unit" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="book_unit_form">
+                    @csrf
+                    <input id="property_id" type="hidden" class="form-control" name="property_id" value="19">
+                    <input type="hidden" name="new_user" value="" id="new_user">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Add Money</h3>
+                    </div>
+                      <div class="modal-body">
+                        <div class="row">
+                            <label for="email_token" class="col-md-1 col-form-label text-md-right"></label>
+                            <label for="email_token" class="col-md-2 col-form-label text-md-right">{{ __('Amount') }}</label>
+                            <div class="col-md-8">
+                                <input id="amount" placeholder="Amount" type="number" class="form-control"  name="amount" value="" status="false">
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="make_payment">
+                              <button type="button" class="btn btn-primary">
+                                        Pay $23000 with <img src="http://122.160.138.253:8080/property/public/images/Paypal-button.png">
+                                    </button> or
+                                    <button type="button" class="btn btn-primary">
+                                        Pay $23000 using <img src="http://122.160.138.253:8080/property/public/images/bank-transfer.png">
+                                    </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success" id="">Proceed</button>
+                        </div>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">
+        .make_payment img {width: 100px; height: 35px; }
+        .make_payment {margin: 0 auto; text-align: center; padding: 15px 0 30px; }
+        .float-right { float: right; }
+        .Building-Units {   font-size: 28px;margin-top: 20px;}
+        .unit-body {
+            border: 2px solid #f28401;
+            padding: 15px;
+            /*margin: 15px 0;*/
+            border-radius: 5px;
+            height: 80px;
+        }
+    </style>
+@endsection

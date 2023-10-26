@@ -1,0 +1,44 @@
+@if(Request::is('/'))
+    <nav class="navbar navbar-inverse">
+@else
+    <nav class="navbar other-pages navbar-inverse">
+@endif
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ url('/') }}">
+        @if(Request::is('/'))
+            <img src="{{ url('/images/logo.png') }}">
+        @else
+            <img src="{{ url('/images/logo_new.png') }}">
+        @endif
+    </a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="#">About Us</a></li>    
+      <li><a href="#">Contact Us</a></li>
+      <li><a href="{{ url('/register-membership') }}">Membership</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+           @if (Route::has('login'))
+                    @auth
+                         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Welcome {{ Auth::user()->name }} <span class="glyphicon glyphicon-user"></span><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="{{ url('profile') }}">Profile</a></li>
+                              <li>
+                                  <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                          {{ __('Logout') }}
+                                  </a>
+                                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">  @csrf  </form>
+                              </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li><a href="{{ route('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        @if (Route::has('register'))
+                             <li><a href="{{ route('register') }}"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                        @endif
+                    @endauth
+            @endif
+    </ul>
+  </div>
+</nav>

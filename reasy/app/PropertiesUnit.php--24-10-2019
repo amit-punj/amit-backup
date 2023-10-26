@@ -1,0 +1,27 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PropertiesUnit extends Model
+{
+    protected $table = 'property_units';
+
+    public function Book_appointment()
+    {
+        return $this->hasMany('App\Book_appointment');
+        // return $this->belongsTo('App\Book_appointment');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany('App\Contracts');
+        // return $this->belongsTo('App\Book_appointment');
+    }
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+        // return $this->belongsTo('App\Book_appointment');
+    }
+}

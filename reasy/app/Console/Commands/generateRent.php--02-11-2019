@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Booking;
+use App\UnitsRent;
+use Carbon\Carbon;
+class generateRent extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'generated:rent';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Rent Generated Successfully';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle() {
+        $currentDate = Carbon::now()->format('d');
+        $today = Carbon::now()->format('Y/m/d');
+        $contracts = Booking::where('status',6)->where('start_date', '<', $today)->where('end_date', '>=', $today)->get();
+        if(count($contracts) > 0){
+            foreach ($contracts as $key => $contract) {
+
+                $contractStartDate = Carbon::parse($contract->start_date)->format('d');
+                if($currentDate == $contractStartDate){
+                    echo $contract->id;
+                    $unitRent = (int)$contract->rent;
+                    $unitsRent = UnitsRent::where('contract_id',$contract->id)->where('user_id',$contract->tenant_id)->where('date',$today)->first();
+                    if($unitsRent){
+                        $rent = $unitsRent;
+                    } else {
+                        $rent = new UnitsRent();
+                    }
+                    $rent->rent = $unitRent;
+                    $rent->total_amount = $unitRent+(int)$rent->electric_bill+(int)$rent->water_bill+(int)$rent->gas_bill;
+                    $rent->rent_status = 'pending';
+                    $rent->user_id = $contract->tenant_id;
+                    $rent->contract_id = $contract->id;
+                    $rent->unit_id = $contract->unit_id;
+                    $rent->date = $today;
+                    $rent->save();
+                }
+            }
+        }
+    }
+}

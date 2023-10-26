@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Http\Middleware;
+use Auth;
+use Closure;
+Use Helper;
+use Illuminate\Http\Request;
+use App\PropertiesUnit;
+use App\Booking;
+use App\Sub_Tenant;
+class ContractAuthentication
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    const Property_Manager = 3;
+    const Property_Description_Experts = 4;
+    const Legal_Advisor = 5;
+    const Visit_Organizer = 6;
+    const Tenant = 1;
+    const Property_Owner = 2;
+    public function handle(Request $request, Closure $next){
+        $parameterId =  $request->route()->parameters('id');
+        $contract = Booking::where('id', $parameterId['id'])->first();
+        $tenant_ids = Sub_Tenant::where('booking_id', $parameterId['id'])->pluck('tenant_id')->toArray();
+        // Helper::pr($contract);
+        // Helper::pr($tenant_ids);
+        // die('as');
+        if ( (\Request::is('contract-details/*')) && ($contract) ) {
+            if(\Auth::user()->user_role == self::Property_Owner){
+                if($contract->po_id == \Auth::user()->id){
+                    return $next($request);
+                } else {
+                    toastr()->warning('Contract View Authentication Failed');
+                    return redirect('/');
+                    return redirect()->back();
+                }
+            } else if( \Auth::user()->user_role == self::Property_Manager){
+                if($contract->pm_id == \Auth::user()->id){
+                    return $next($request);
+                } else {
+                    toastr()->warning('Contract View Authentication Failed');
+                    return redirect('/');
+                    return redirect()->back();
+                }
+            } else if( \Auth::user()->user_role == self::Legal_Advisor){
+                if($contract->lad_id == \Auth::user()->id){
+                    return $next($request);
+                } else {
+                    toastr()->warning('Contract View Authentication Failed');
+                    return redirect('/');
+                    return redirect()->back();
+                }
+            } else if( \Auth::user()->user_role == self::Property_Description_Experts){
+                if($contract->pde_id == \Auth::user()->id){
+                    return $next($request);
+                } else {
+                    toastr()->warning('Contract View Authentication Failed');
+                    return redirect('/');
+                    return redirect()->back();
+                }
+            } else if( \Auth::user()->user_role == self::Tenant){
+                if($contract->tenant_id == \Auth::user()->id || in_array(\Auth::user()->id, $tenant_ids)){
+                    return $next($request);
+                } else {
+                    toastr()->warning('Contract View Authentication Failed');
+                    return redirect('/');
+                    return redirect()->back();
+                }
+            } else {
+                toastr()->error('Not a Valid User!');
+                return redirect()->back();
+            }
+        }  else if ( (\Request::is('book-appointment/*')) && ($contract) ) {
+            // Helper::pr(\Auth::user()->id);
+            // Helper::pr($contract);
+            // die('aaaa');
+            if((\Auth::user()->user_role == self::Tenant) && (\Auth::user()->id == $contract->tenant_id || in_array(\Auth::user()->id, $tenant_ids) )){
+                return $next($request);
+            } else {
+                toastr()->warning('Booking Authentication Failed');
+                return redirect('/');
+                return redirect()->back();
+            }
+        } else {
+            return abort(404);
+        }
+    }
+}

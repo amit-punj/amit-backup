@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Meters;
+use App\Contracts;
+use App\PropertiesUnit;
+use App\Vendors;
+use Illuminate\Support\Facades\DB;
+class MeterController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    // Dashboard Meters view through Unit Utility
+    public function meterDetails($id){
+        $meter = Meters::find($id);
+        $unit = PropertiesUnit::find($meter->unit_id);
+        return view('meters.meterdetails')->with([
+            'unit'=>$unit,
+            'meter' => $meter
+        ]);
+    }
+
+    // Dashboard Unit Utility Meters
+    public function listMeters($id){
+        $unit = PropertiesUnit::find($id);
+        $property = DB::table('properties')->where('id', $unit->building_id)->first();
+        $electricMeters = Meters::where('unit_id', $id)->where('meter_type', 'electric_meter')->get();
+        $waterMeters = Meters::where('unit_id', $id)->where('meter_type', 'water_meter')->get();
+        $gasMeters = Meters::where('unit_id', $id)->where('meter_type', 'gas_meter')->get();
+        return view('meters.listmeters')->with([
+            'unit'=>$unit,
+            'electricMeters'=>$electricMeters,
+            'waterMeters'=>$waterMeters,
+            'gasMeters'=>$gasMeters,
+            'property'=>$property
+        ]);
+    }
+
+    // Dashboard Meters create through Unit Utility
+    public function createMeter(Request $request){
+        $request->validate([
+            'unit_id' => ['required'],
+            'meter_type' => ['required'],
+            'unit_price' => ['required','numeric'],
+            'ean_number' => ['required'],
+            'meter_number' => ['required'],
+        ]);
+        $MeterObj = new Meters;
+        $MeterObj->unit_id = $request->input('unit_id');
+        $MeterObj->meter_type = $request->input('meter_type');
+        $MeterObj->unit_price = $request->input('unit_price');
+        $MeterObj->ean_number = $request->input('ean_number');
+        $MeterObj->meter_number = $request->input('meter_number');
+        $MeterObj->save();
+        return redirect()->back()->with('message', 'Meter Added Successfully!');
+    }
+
+    // Dashboard Meters delete through Unit Utility
+    public function deleteMeter($id){
+        $meters = new Meters;
+        $meters->find($id)->delete();
+        return redirect()->back()->with('message', 'Meter Delete Successfully!');
+    }
+
+    // Dashboard Meters update through Unit Utility
+    public function updateMeter(Request $request){
+       $this->validate($request, [
+            'meter_id' => 'required',
+            'unit_price' => 'required|numeric',
+            'ean_number' => 'required',
+            'meter_number' => ['required'],
+        ]);
+        $meter = Meters::find($request->input('meter_id'));
+        $meter->unit_price = $request->input('unit_price');
+        $meter->ean_number = $request->input('ean_number');
+        $meter->meter_number = $request->input('meter_number');
+        $meter->save();
+        return redirect()->back()->with('message', 'Meter Update Successfully!');
+    }
+
+}

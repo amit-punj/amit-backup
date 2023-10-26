@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Validator;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Meters;
+use App\Contracts;
+use App\PropertiesUnit;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Auth;
+use Helper;
+use Illuminate\Support\Facades\Input;
+
+
+class HomeController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index()
+    {
+        $userIds = [];
+        $validMemberShipUser = DB::table('membership_payments')
+                              ->select('user_id')
+                              ->where('membership_end_at', '>', Carbon::now())
+                              ->get();
+        foreach ($validMemberShipUser as $key => $value) {
+          $userIds[] = $value->user_id;
+        }
+        $properties = PropertiesUnit::where('booking_status', '=' , 0)
+                      ->whereIn('user_id', $userIds)
+                      ->get();
+        return view('homepage')->with(['properties'=>$properties]);
+    }
+
+    public function search(Request $request)
+    {
+        $postData = Input::all();
+        $latitude = 0;
+        $longitude = 0;
+        if (isset($postData['latitude']) && $postData['latitude'] != "") {
+            $latitude =$postData['latitude'];
+            $longitude =$postData['longitude'];
+        } 
+        if (isset($_GET['pageno'])) {
+            $pageno = $_GET['pageno'];
+        } else {
+            $pageno = 1;
+        }
+        $no_of_records_per_page = 10;
+        $offset = ($pageno-1) * $no_of_records_per_page;
+
+        $page = $pageno;
+        $limit = $no_of_records_per_page;
+
+        $total_property = \DB::table('property_units')
+            ->select('*',\DB::raw('( 
+                3959 * acos (
+                  cos ( radians('.$latitude.') )
+                  * cos( radians( latitude ) )
+                  * cos( radians( longitude ) - radians('.$longitude.') )
+                  + sin ( radians('.$latitude.') )
+                  * sin( radians( latitude ) )
+                )
+              ) as distance') );  
+        $property_list = \DB::table('property_units')
+            ->select('*',\DB::raw('( 
+                3959 * acos (
+                  cos ( radians('.$latitude.') )
+                  * cos( radians( latitude ) )
+                  * cos( radians( longitude ) - radians('.$longitude.') )
+                  + sin ( radians('.$latitude.') )
+                  * sin( radians( latitude ) )
+                )
+              ) as distance') ); 
+
+        if($postData['keyword'] != '' && !empty($postData['keyword']))
+        {
+            $total_property = $total_property->where('unit_name', 'like', '%'.$postData['keyword'].'%');
+            $property_list = $property_list->where('unit_name', 'like', '%'.$postData['keyword'].'%');
+        }
+        if($postData['property_type'] != '' && !empty($postData['property_type']))
+        {
+            $total_property = $total_property->where('u_type',  $postData['property_type']);
+            $property_list = $property_list->where('u_type',  $postData['property_type']);
+        }
+        $total_property = $total_property->where('booking_status', '=' , 0);
+        $property_list = $property_list->where('booking_status', '=' , 0);
+        
+        $total_property = $total_property->having('distance','<',10)->get();
+        $property_list = $property_list->having('distance','<',10)->limit($no_of_records_per_page)->offset($offset)->get();
+        $total_rows = count($total_property);
+        $total_pages = ceil($total_rows / $no_of_records_per_page);
+        return view('property_search_list',compact('property_list','page','total_pages','limit'));
+    }
+}

@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Validator;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Meters;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+class PropertyController extends Controller {   
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
+    public function index(){
+        return view('dashboard.createproperty');
+    }
+
+    public function membershipdetails(){
+        $membership_data = DB::table('membership_payments')
+            ->join('plans', 'membership_payments.plan_id', '=', 'plans.id')
+            ->where('membership_payments.user_id', \Auth::user()->id)
+            ->select('membership_payments.*', 'plans.*', 'membership_payments.status')
+            ->get();
+        return view('dashboard.membershipdetails')->with(['membership_data'=>$membership_data]);
+    }
+
+    public function list(){
+        $properties = DB::table('properties')->where('user_id', \Auth::user()->id)->get();
+        return view('dashboard.listofproperties')->with(['properties'=>$properties]);
+    }
+
+    public function view($id){
+        $data = Properties::find($id);
+        if($data){
+            $images = null;
+            if($data->images) {
+                $images = json_decode($data->images, true);
+            }
+            return view('viewproperty')->with(['data'=>$data,'images'=> $images]);
+        } else {
+            return abort(404);
+        }       
+    }
+
+    public function create(Request $request){
+        $request->validate([
+            'user_id' => ['required'],
+            'title' => ['required', 'string'],
+            'address' => ['required'],
+            'rent' => ['required','numeric'],
+            'deposit' => ['required','numeric'],
+            'images.*' => ['mimes:jpeg,png,jpg','max:2048'],
+            'property_doc_file' => ['max:10000','mimes:pdf'],
+        ]);
+
+        /*  Create Property */
+        $property = new Properties;
+        $property->user_id = $request->input('user_id');
+        $property->title = $request->input('title');
+        $property->location = $request->input('address');
+        $property->rent = $request->input('rent');
+        $property->deposite = $request->input('deposit');
+
+        if($request->hasFile('images')) {
+            $image_name = [];
+            foreach ($request->images as $image) {
+                $imageName = time().'.'.$image->getClientOriginalExtension();
+                $image->move(public_path('images/property_images'), $imageName);
+                $image_name[] = $imageName;
+            }
+           $property->images = json_encode($image_name);
+        }
+
+        if($request->hasFile('property_doc_file')) {   
+            $file = $request->file('property_doc_file');      
+            $file_name = time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('/property_doc'), $file_name);
+            $property->property_doc = $file_name;
+        }
+        $property->save();
+        $propertyId = $property->id;
+
+        /* Create Meter */
+        if ($request->has(['meter'])) {
+           foreach ($request->meter as $meter) {
+                $MeterObj = new Meters;
+                $MeterObj->property_id = $propertyId;
+                $MeterObj->meter_type = $meter['meter_type'];
+                $MeterObj->meter_number = $meter['meter_number'];
+                $MeterObj->ean_number = $meter['ean_number'];
+                $MeterObj->unit_price = $meter['unit_price'];
+                if( isset($meter['meter_doc']) ) {
+                    $file = $meter['meter_doc'];
+                    $file_name = time().$file->getClientOriginalName();
+                    $destinationPath = public_path()."/property_doc/".$file_name;
+                    $file->move($destinationPath,$file->getClientOriginalName());
+                    $MeterObj->document_file = $file_name;
+                }
+
+                $MeterObj->save();
+           };
+        }
+        return redirect()->back()->with('message', 'Property Create Successfully!');
+    }
+
+    public function delete($id){
+        $property = new Properties;
+        $property->find($id)->delete();
+        Meters::where('property_id', $id)->delete();
+        return redirect()->back()->with('message', 'Delete Successfully!');
+    } 
+
+}

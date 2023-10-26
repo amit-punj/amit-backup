@@ -1,0 +1,245 @@
+<?php
+
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Validator;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+//use App\Meters;
+//use App\Contracts;
+//use App\PropertiesUnit;
+use App\Visits;
+//use Illuminate\Support\Facades\DB;
+//use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
+
+use DB;
+use Illuminate\Support\Facades\Hash;
+use App\VerifyEmail;
+use App\VerifyUser;
+use App\Mail\VerifyMail;
+use Mail;
+
+
+class GuestController extends Controller {   
+    public function __construct(){
+     //   $this->middleware('auth');
+    }
+
+    public function createVisit(Request $request){
+        $postData = Input::all();
+        $request->validate([
+            'property_id' => ['required'],
+            'time' => ['required','max:255'],
+            'title' => ['required'],
+            'description' => ['required'],
+        ]);    
+        $visits = new Visits;
+        $visits->time = $request->input('time');
+        $visits->tenant_id = Auth::id();
+        $visits->property_id = $request->input('property_id');
+        $visits->property_unit_id = null;
+        $visits->title = $request->input('title');
+        $visits->description = $request->input('description');
+        $visits->save();
+
+        /************************/
+        // $to_name = $request->input('name');
+        // $to_email = $request->input('email');
+        // $data = array('name'=>$request->input('name'), "email" => $request->input('email'),"url"=>$url,"messageinfo" => $request->input('message'));
+            
+        // Mail::send('emails.mail', $data, function($message) use ($to_name, $to_email) {
+        //     $message->to($to_email, $to_name)
+        //             ->subject('Invitations from Reasy Properties');
+        //     $message->from('malkeetvisionvivante@gmail.com','Reasy Property');
+        // });
+
+        return back()->with('message', 'Visit Book Successfully!');
+    }
+    public function viewProperty($id){
+        $data = Properties::find($id);
+        if($data){
+            $images = array();
+            if($data->images) {
+                $images = json_decode($data->images, true);
+            }
+            return view('viewproperty')->with(['data'=>$data,'images'=> $images]);
+        } else {
+            return abort(404);
+        }       
+    }
+
+    public function send_message(Request $request, $id)
+    {
+        if($request->isMethod('post'))
+        {
+            $postData = input::all();
+            $rules = array(
+                'email' => 'required|email',
+                'phone_no' => 'required|regex:/[0-9]{10}/|max:10',
+            );
+            $validator = Validator::make($postData, $rules);
+            if ($validator->fails())
+            {
+                return back()->withInput()->withErrors($validator);
+            }
+            else
+            {
+                $user = User::where(['email' => $postData['email'] ])->first();
+                if(empty($user) && $user == "" )
+                {
+                    $user = User::create([
+                                'name'      => $postData['name'],
+                                'email'     => $postData['email'],
+                                'phone_no'  => $postData['phone_no'],
+                                'user_role' => 1,
+                                'password'  => '',
+                            ]);
+                    $verifyUser = VerifyUser::create([
+                        'user_id' => $user->id,
+                        'token' => str_random(40)
+                    ]);
+                    $user['token'] = $verifyUser->token;
+                    Mail::to($user->email)->send(new VerifyMail($user));
+                }
+                /* Get Data of property owner*/
+                $data = DB::table('users')
+                    ->select('users.*','users.id as user_id')
+                    ->Join('properties', 'users.id', '=', 'properties.user_id')
+                    ->where(['properties.id' => $id])
+                    ->first();
+
+                $owner_email = $data->email;
+                $owner_name = $data->name;
+                $subject = "Message Sent"; 
+                $admin_mail = 'visionvivante@gmail.com';
+
+                $owner_data = array(
+                    'username' => $data->name,
+                    'logo'     => 'http://angular.visionvivante.com/assets/manga/logo.png',
+                    'email'    =>  $data->email,
+                    'message_data'  =>  $postData['message'],
+                    'phone_no' =>  $data->phone_no,
+                    'owner_name' => $owner_name,
+                    'tenant_name' => $postData['name'],
+                    'tenant_phone' => $postData['phone_no'],
+                    'tenant_email' => trim($postData['email']),
+                );
+
+                /* Email to property owner start*/
+                Mail::send(['html' => 'emails/send_message-owner'], $owner_data, function ($message) use ($owner_data,$owner_email,$admin_mail,$owner_name,$subject){
+                        $message->from($admin_mail, 'Reasy Property');
+                        $message->to($owner_email,$owner_name)->subject($subject);
+                });
+                /* Email to property owner end*/
+                
+                /* Email to Tenant end */
+                $email_data = array(
+                    'username' => $postData['name'],
+                    'logo'     => 'http://angular.visionvivante.com/assets/manga/logo.png',
+                    'email'    =>  $postData['email'],
+                    'message_data'  =>  $postData['message'],
+                    'new_user'  =>  $postData['new_user'],
+                    'phone_no' =>  $postData['phone_no'],
+                    'owner_name' => $owner_name,
+                    'url' => '',
+                );
+
+                $customer_email = trim($postData['email']);
+                $customer_name = $postData['name']; 
+                /* Email to tenant start*/
+                Mail::send(['html' => 'emails/send_message'], $email_data, function ($message) use ($email_data,$customer_email,$admin_mail,$customer_name,$subject){
+                        $message->from($admin_mail, 'Reasy Property');
+                        $message->to($customer_email,$customer_name)->subject($subject);
+                });
+                /* Email to tenant end*/
+                return Redirect('propertydetails/'.$id)->with('message', 'Message sent successfully!');
+            }
+            
+        }
+        return view('tenant/send_message',compact('id')); 
+    }
+
+    public function check_user(Request $request)
+    {
+        if($request->isMethod('post'))
+        {
+            $postData = input::all();
+            $rules = array(
+                'email' => 'required|string|email|max:255',
+            );
+            $validator = Validator::make($postData, $rules);
+            if ($validator->fails())
+            {
+                return response()->json(['data'=>'Please enter a valid email','status' => 'error']);
+            }
+            else
+            {
+                $users = User::where(['email' => $postData['email'] ])->first();
+                if(!empty($users) && $users )
+                {
+                    return response()->json(['data'=>'User already exist','status' => 'success']);
+                }
+                else
+                {
+                    $confirmation_code = $this->randomPassword();
+                    $customer_email =  $postData['email'];
+                    $admin_mail = 'visionvivante@gmail.com';
+                    $customer_name = 'Reasy Property';
+                    $subject = "Email Verification";
+                    $email_data = array(
+                        'email' => $postData['email'],
+                        'confirmation_code' => $confirmation_code,
+                    );
+                    $VerifyEmail = VerifyEmail::updateOrCreate(
+                        ['email' => $postData['email'] ],
+                        ['confirmation_code' => $confirmation_code]
+                    );
+                    Mail::send(['html' => 'emails/verify-email'], $email_data, function ($message) use ($email_data,$customer_email,$admin_mail,$customer_name,$subject){
+                        $message->from($admin_mail, 'Reasy Property');
+                        $message->to($customer_email,$customer_name)->subject($subject);
+                    });
+                    return response()->json(['data'=>'Email is successfully sent. Verify it.','status' => 'mail']);
+                }
+                return response()->json(['data'=>'no','status' => 'error']);
+            }
+        }
+    }
+
+    public function verify_email(Request $request)
+    {
+        if($request->isMethod('post'))
+        {
+            $postData = input::all();
+            $VerifyEmail = VerifyEmail::where(['email' => $postData['email'], 'confirmation_code'=> $postData['confirmation_code'] ])->first();
+            if(!empty($VerifyEmail) && $VerifyEmail )
+            {
+                $update = VerifyEmail::where(['email' => $postData['email'], 'confirmation_code'=> $postData['confirmation_code'] ])->update(['status' => 1]);
+                return response()->json(['data'=>'Email verified successfully','status' => 'success']);
+            }
+            else
+            {
+                return response()->json(['data'=>'Email not verified','status' => 'error']);
+            }
+        }
+    }
+
+    public function randomPassword() 
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
+    }
+
+    
+}

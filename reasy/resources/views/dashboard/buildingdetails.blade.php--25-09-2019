@@ -1,0 +1,179 @@
+@section('title','Building Details')
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner', ['banner_text' => 'Building Details'])
+    <div class="container bootom-space">
+        <div class="row">
+            <div class="col-md-12">
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                        {!! implode('', $errors->all('<div class="error-message">:message</div>')) !!}
+                @endif
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="Building-title">Building Details</div>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col-sm-12">
+                            <div class="unit"><span>Building Name : </span> test Building</div>
+                            <div class="unit"><span>Address : </span>  Kansas City, MO, USA</div>
+                            <div class="unit"><span>Description : </span> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</div>
+                            <div class="unit"><span>Deposit : </span> test </div>
+                            
+                            <div class="unit"><span>Property Manager : </span> Property Manager </div>
+                            <div class="unit"><span>Property Description Experts : </span> Property Description Experts </div>
+                            <div class="unit"><span>Legal Advisor : </span> Legal Advisor </div>
+                            <div class="unit"><span>Visit Organizer : </span> Visit Organizer </div>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="Building-Units">Building Units</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="add-unit-main">
+                            <a target="_blank" class="btn btn-success" href="{{ url('create-property')}}">Create Unit <span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="unit-body">
+                            <div class="unit-delete"><a href="#"><span class="glyphicon glyphicon-trash"></span></a></div>
+                            <div class="unit-delete"><a href="{{ url('edit-unit/19') }}"><span class="glyphicon glyphicon-edit"></span></a>
+                            </div>
+                            <div class="unit_number"> <span>Unit Number :</span> 1</div>
+                            <div class="unit"><span>Unit Name : </span> test </div>
+                            <div class="unit"><span>Rent : </span> 555 </div>
+                            <div class="unit"><span>Deposit : </span> 35000 </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="unit-body">
+                            <div class="unit-delete"><a href="#"><span class="glyphicon glyphicon-trash"></span></a></div>
+                            <div class="unit-delete"><a href="{{ url('edit-unit/19') }}"><span class="glyphicon glyphicon-edit"></span></a>
+                            </div>
+                            <div class="unit_number"> <span>Unit Number :</span> 1</div>
+                            <div class="unit"><span>Unit Name : </span> test </div>
+                            <div class="unit"><span>Rent : </span> 555 </div>
+                            <div class="unit"><span>Deposit : </span> 35000 </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="unit-body">
+                            <div class="unit-delete"><a href="#"><span class="glyphicon glyphicon-trash"></span></a></div>
+                            <div class="unit-delete"><a href="{{ url('edit-unit/19') }}"><span class="glyphicon glyphicon-edit"></span></a>
+                            </div>
+                            <div class="unit_number"> <span>Unit Number :</span> 1</div>
+                            <div class="unit"><span>Unit Name : </span> test </div>
+                            <div class="unit"><span>Rent : </span> 555 </div>
+                            <div class="unit"><span>Deposit : </span> 35000 </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="unit-body">
+                            <div class="unit-delete"><a href="#"><span class="glyphicon glyphicon-trash"></span></a></div>
+                            <div class="unit-delete"><a href="{{ url('edit-unit/19') }}"><span class="glyphicon glyphicon-edit"></span></a>
+                            </div>
+                            <div class="unit_number"> <span>Unit Number :</span> 1</div>
+                            <div class="unit"><span>Unit Name : </span> test </div>
+                            <div class="unit"><span>Rent : </span> 555 </div>
+                            <div class="unit"><span>Deposit : </span> 35000 </div>
+                        </div>
+                    </div>
+                </div>                                            
+            </div>
+        </div>
+    </div> 
+    <div class="modal fade" id="updateModel" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{{-- url('/update-unit') --}}" id="create_unit_form">
+                    @csrf
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Create Unit</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="unit_name" class="col-md-4 col-form-label text-md-right">{{ __('Unit Name') }}</label>
+                        <div class="col-md-6">
+                            <input id="update_unit_name" type="text" class="form-control" name="unit_name" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="rent" class="col-md-4 col-form-label text-md-right">{{ __('Rent') }}</label>
+                        <div class="col-md-6">
+                            <input id="update_rent" type="text" class="form-control" name="rent" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="deposit" class="col-md-4 col-form-label text-md-right">{{ __('Deposit') }}</label>
+                        <div class="col-md-6">
+                            <input id="update_deposit" type="text" class="form-control" name="deposit" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="deposit" class="col-md-12 col-form-label text-md-right">{{ __('Amenities/Facilities available') }}</label>
+                        <div class="col-md-12">
+                            @foreach ($amenities as $amenity)  
+                                <div class="col-md-6">
+                                    <input class="form-control amenities-input" name="amenities[]" type="checkbox" value="{{$amenity->id}}">
+                                    <label class="col-form-label">{{$amenity->amenities_name}}</label>
+                                </div>
+                             @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                     <button type="submit" class="btn btn-success">Create Unit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+            jQuery('#create_unit_form').validate({
+                errorClass:"red",
+                validClass:"green",
+                rules:{                  
+                    unit_name:{
+                        required:true,
+                    },
+                    rent:{
+                        required:true,
+                        number:true
+                    },
+                    deposit:{
+                        required:true,
+                        number:true
+                    },
+                }      
+            });
+        </script>
+    <style type="text/css">
+        .error-message{color: #fff; background-color: red; padding: 5px; margin: 5px 0; }
+        .unit-body {border: 2px solid #f28401; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .unit_number {font-size: 18px; }
+        .unit-body span {font-size: 15px; font-weight: bold; color: #f28401; }
+        .unit {padding: 5px 0; }
+        .top-nevigation {padding-bottom: 25px; }
+        ul.nav.nav-tabs {border: 0; }
+        .top-nevigation li {border: 0 !important; padding: 0 6px; }
+        .top-nevigation a {border: 0 !important; background-color: #fae4c4; color: inherit; }
+        .top-nevigation li.active a {background: #f28302; color: #fff; }
+        .unit-delete span {color: #000000bd; position: relative; float: right;     margin-left: 5px; }
+        .add-unit-main {text-align: right; margin-top: 20px;}
+        .unit-delete span {color: #000000bd; position: relative; float: right;     margin-left: 5px; }
+        .amenities-input{    width: 20px; display: inline-block; height: 20px; padding-top: 2px;}
+        .container.bootom-space {margin-bottom: 50px; }
+        .Building-title {font-size: 28px; }
+        .Building-Units {font-size: 28px; margin-top: 20px;}
+        .unit span {font-weight: bold; }
+        </style>
+@endsection

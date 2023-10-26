@@ -1,0 +1,155 @@
+<div  class="container-fluid footer-main">
+    <div class="container">
+        <div  class="row">
+            <div  class="col-md-4 col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div  class="about-us">
+                    <h4  class="f400">About Us</h4>
+                    <p >Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                </div>
+            </div>
+            <div  class="col-md-4 col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div  class="quick-links">
+                    <h4  class="f400">Quick links</h4>
+                    <ul >
+                        <li >Rent</li>
+                        <li >Find an agent</li>
+                        <li >Suburbs</li>
+                        <li ><a  alt="Owner Information" target="_blank" href="#">Owner Information</a></li>
+                        <li ><a  alt="Owner Application" target="_blank" href="#">Owner Application</a></li>
+                        <li ><a  alt="Info to Guests" target="_blank" href="#">Info to Guests</a></li>
+                        <li ><a  alt="Guest Application" target="_blank" href="#f">Guest Application</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div  class="col-md-4 col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div  class="recent-post">
+                    <h4  class="f400">Contact</h4>
+                    <div >
+                        <a target="_blank" href="#">Contact</a>
+                        <!-- <span >7047 Trout Drive, Elizabeth City, NC 27909</span> -->
+                    </div>
+                    <!-- <div >
+                        <span >Phone: 00 999 0000</span>
+                    </div>
+                    <div >
+                        <span >Email: Test@gmail.com</span>
+                    </div> -->
+                    <!-- <div >
+                        <a  class="color-orange" routerlink="#" href="/%23">The Guest Home</a>
+                    </div> -->
+                </div>
+            </div>
+           <!--  <div  class="col-md-4 col-12 col-sm-6 col-lg-3 col-xl-3">
+                <div  class="locate-us">
+                    <h4  class="f400">Locate Us</h4>
+                    <div  class="imgBox">
+                       <img src="{{ url('/images/map.png') }}">
+                    </div>
+                </div>
+            </div> -->
+        </div>
+     </div> 
+</div> 
+<div  class="container-fluid copy-right-section">
+    <div class="container"> 
+        <span > © REASY </span><span >| </span><span > Privacy Policy</span><span >| </span><span > Disclaimer and Disclosures </span><span >| </span><span > User Terms </span><span >| </span><span >FAQs</span>
+    </div>
+</div> 
+<script>
+var placeSearch, autocomplete, b_autocomplete, u_autocomplete;
+
+// function initAutocomplete() {
+
+//     var acInputs = document.getElementsByClassName("autocomplete");
+
+//     for (var i = 0; i < acInputs.length; i++) {
+
+//         var autocomplete = new google.maps.places.Autocomplete(acInputs[i]);
+//         autocomplete.inputId = acInputs[i].id;
+
+//         google.maps.event.addListener(autocomplete, 'place_changed', function () {
+//             // document.getElementById("log").innerHTML = 'You used input with id ' + this.inputId;
+//         });
+//     }
+// }
+
+
+
+function initAutocomplete() {
+  autocomplete = new google.maps.places.Autocomplete(
+  document.getElementById('autocomplete'), {types: ['geocode']});
+  autocomplete.setFields(['address_component', 'geometry']);
+  autocomplete.addListener('place_changed', fillInAddress);
+}
+
+function fillInAddress() {
+  var place = autocomplete.getPlace();
+  var lat = place.geometry.location.lat();
+  var lng = place.geometry.location.lng();
+  console.log(place.geometry.location.lat());
+
+  document.getElementById("latitude").value = lat;
+  document.getElementById("longitude").value = lng;
+}
+$(document).ready(function()
+{
+    b_initAutocomplete();
+    u_initAutocomplete();
+});
+
+function b_initAutocomplete() {
+    b_autocomplete = new google.maps.places.Autocomplete(
+    document.getElementById('b_autocomplete'), {types: ['geocode']});
+    b_autocomplete.setFields(['address_component', 'geometry']);
+    b_autocomplete.addListener('place_changed', b_fillInAddress);
+      //alert(b_autocomplete);
+      console.log(b_autocomplete); 
+}
+function b_fillInAddress() {
+  var b_place = b_autocomplete.getPlace();
+  var b_lat = b_place.geometry.location.lat();
+  var b_lng = b_place.geometry.location.lng();
+  console.log(b_place.geometry.location.lat());
+
+  document.getElementById("b_latitude").value = b_lat;
+  document.getElementById("b_longitude").value = b_lng;
+}
+
+function u_initAutocomplete() {
+    u_autocomplete = new google.maps.places.Autocomplete(
+    document.getElementById('u_autocomplete'), {types: ['geocode']});
+    u_autocomplete.setFields(['address_component', 'geometry']);
+    u_autocomplete.addListener('place_changed', u_fillInAddress);
+}
+function u_fillInAddress() {
+  var u_place = u_autocomplete.getPlace();
+  var u_lat = u_place.geometry.location.lat();
+  var u_lng = u_place.geometry.location.lng();
+  console.log(u_place.geometry.location.lat());
+
+  document.getElementById("u_latitude").value = u_lat;
+  document.getElementById("u_longitude").value = u_lng;
+}
+</script>
+
+<script type="text/javascript">
+  $(document).on('click','.search_',function(e){
+        e.preventDefault;
+        var lat =  $("#latitude").val();
+        var lng =  $("#longitude").val();
+        console.log(lat,lng);
+        var search = $("#autocomplete").val();
+        if(search != "")
+        {
+          if (lat != '' && lng != '') {
+            jQuery('#mainSearch').submit();
+          }else{
+            alert('Please select dropdown address');
+            // $('#search_eroor').text('Please select dropdown address');
+            // $("#mainSearch").prop('disabled', true);
+            return false;
+          }
+        }
+    });
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARGpUdzBWKnyufzqzh6sS2jlB91Grx9Ys&libraries=places&callback=initAutocomplete"></script>

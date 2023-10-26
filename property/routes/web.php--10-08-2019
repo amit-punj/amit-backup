@@ -1,0 +1,95 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+/* hHome Page */
+Route::get('/', function () {
+    return view('welcome');
+});
+
+/* FrontEnd User */
+Auth::routes();
+
+Route::get('/home', function () {
+    return redirect('/');
+});
+
+/* FrontEnd User Dashboard */
+Route::get('/profile', 'ProfileController@index');
+Route::get('/editprofile', 'ProfileController@editprofile');
+Route::post('/updateprofile', 'ProfileController@updateprofile');
+Route::get('/purchasemembership', 'ProfileController@purchaseview');
+
+/* Property */
+//Route::get('/admin/addproperty', 'Admin\PropertyController@index')->middleware('CheckUser');
+Route::get('/create-property', 'PropertyController@index');
+Route::post('/create-property', 'PropertyController@create');
+Route::get('/list-units', 'PropertyController@listUnit');
+Route::get('/list-meters', 'PropertyController@listMeters');
+Route::get('/list-contracts', 'PropertyController@listContracts');
+Route::get('/list-guarantors', 'PropertyController@listGuarantors');
+
+Route::post('/create-unit', 'PropertyController@createUnit');
+Route::post('/create-meter', 'PropertyController@createMeter');
+Route::post('/create-contract', 'PropertyController@createContract');
+Route::get('/delete-property/{id}', 'PropertyController@delete');
+Route::get('/delete-unit/{id}', 'PropertyController@deleteUnit');
+Route::get('/delete-meter/{id}', 'PropertyController@deleteMeter');
+Route::get('/delete-contract/{id}', 'PropertyController@deleteContract');
+
+Route::post('/update-unit', 'PropertyController@updateUnit');
+Route::post('/update-meter', 'PropertyController@updateMeter');
+Route::post('/update-contract', 'PropertyController@updateContract');
+
+Route::get('/list-of-properties', 'PropertyController@list');
+Route::get('/membership-details', 'PropertyController@membershipdetails');
+Route::get('/propertydetails/{id}', 'MembershipController@view');
+
+/*For Send invitation */
+Route::post('/send-invitation', 'InvitationController@sendMail');
+Route::get('/create-invitation-user', 'InvitationController@createInvitationUser');
+
+/* Membership payment */
+Route::get('/register-membership','MembershipController@index');
+Route::post('paypal', 'PaymentController@postPaymentWithpaypal');
+Route::get('paypal', array('as' => 'payment.status','uses' => 'PaymentController@getPaymentStatus',));
+
+Route::post('/upgrade-membership', 'PaymentController@postUpgradeMembership');
+Route::get('/upgrade-membership', array('as' => 'upgrade.status','uses' => 'PaymentController@getUpgradetStatus',));
+
+/* Admin Login */
+Route::get('/admin-login', 'Admin\DashboardController@adminLogin');
+Route::post('/admin-login', 'Admin\DashboardController@postAdminLogin'); 
+Route::get('/admin/dashboard', 'Admin\DashboardController@index')->middleware('CheckUser');
+
+/* Admin Cms pages */
+Route::get('/admin/addcmspage', 'Admin\AddcmsController@index')->middleware('CheckUser');
+Route::post('/admin/addcmspage', 'Admin\AddcmsController@create')->middleware('CheckUser');
+Route::get('/admin/listcmspage', 'Admin\AddcmsController@list')->middleware('CheckUser');
+Route::get('/admin/editcmspage/{id}', 'Admin\AddcmsController@edit')->middleware('CheckUser');
+Route::post('/admin/updatecmspage', 'Admin\AddcmsController@update')->middleware('CheckUser');
+Route::get('/admin/deletecmspage/{id}', 'Admin\AddcmsController@delete')->middleware('CheckUser');
+
+/* Admin Users */
+Route::get('/admin/listusers', 'Admin\UserlistController@list')->middleware('CheckUser');
+Route::get('/admin/deleteuser/{id}', 'Admin\UserlistController@delete')->middleware('CheckUser');
+
+/* Admin Plans */
+Route::get('/admin/addnewplan', 'Admin\PlanController@index')->middleware('CheckUser');
+Route::post('/admin/addnewplan', 'Admin\PlanController@create')->middleware('CheckUser');
+Route::get('/admin/listplans', 'Admin\PlanController@list')->middleware('CheckUser');
+Route::get('/admin/editplanpage/{id}', 'Admin\PlanController@edit')->middleware('CheckUser');
+Route::post('/admin/updateplanpage', 'Admin\PlanController@update')->middleware('CheckUser');
+Route::get('/admin/deleteplanpage/{id}', 'Admin\PlanController@delete')->middleware('CheckUser');
+
+/* Admin Redirecton */
+Route::get('/admin', 'Admin\DashboardController@adminRedirect')->middleware('CheckUser');

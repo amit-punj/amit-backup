@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Plans;
+// use Illuminate\Support\Facades\Input;
+// use Illuminate\Support\Facades\Validator;
+
+class PlanController extends Controller {
+
+    public function index(){
+    	return view('admin.addnewplan'); 
+    }
+
+    public function create(request $request){
+
+    	$request->validate([
+           		'title' => 'required',
+				'status' => 'required|numeric',
+                'price' => 'required|numeric',
+                'short_description' => 'required',
+                'description' => 'required',
+       			]);
+        $obj = new Plans;
+        $description = $obj->textEditorData($request->input('description'));
+    	$plan = new Plans;
+       	$plan->title = $request->input('title');
+       	$plan->status = $request->input('status');
+        $plan->price = $request->input('price');
+		$plan->short_description = $request->input('short_description');
+        $plan->description = $description;
+        $plan->save();
+       	return redirect('/admin/listplans');
+    }
+    public function list(request $request){
+        $plans = Plans::all();        
+    	return view('admin.listplanespage')->with(['plans'=>$plans]);
+    }
+    public function edit($id){
+        $data = Plans::find($id);
+        return view('admin.editplanpage')->with(['data'=>$data]);
+    }
+    public function delete($id){
+        $plans = new Plans;
+        $plans->find($id)->delete();
+        return back();
+    }
+    public function update(request $request){
+        $this->validate($request, [
+                'title' => 'required',
+                'status' => 'required|numeric',
+                'price' => 'required|numeric',
+                'short_description' => 'required',
+                'description' => 'required',
+                ]);
+        $obj = new Plans;
+        $description = $obj->textEditorData($request->input('description'));
+        $plan = Plans::find($request->input('id'));
+        $plan->title = $request->input('title');
+        $plan->status = $request->input('status');
+        $plan->price = $request->input('price');
+        $plan->short_description = $request->input('short_description');
+        $plan->description = $description;
+        $plan->save();
+        return back();
+    }
+
+}

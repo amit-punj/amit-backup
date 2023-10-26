@@ -1,0 +1,406 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Booking;
+use App\Meters;
+use App\MeterReadings;
+use App\Contracts;
+use App\PropertiesUnit;
+use App\Transactions;
+use App\Vendors;
+Use Helper;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Mail;
+
+use PayPal\Rest\ApiContext;
+use PayPal\Auth\OAuthTokenCredential;
+use PayPal\Api\Amount;
+use PayPal\Api\Details;
+use PayPal\Api\Item;
+use PayPal\Api\ItemList;
+use PayPal\Api\Payer;
+use PayPal\Api\Payment;
+use PayPal\Api\RedirectUrls;
+use PayPal\Api\ExecutePayment;
+use PayPal\Api\PaymentExecution;
+use PayPal\Api\Transaction;
+use Illuminate\Support\Facades\Input;
+class ContractController extends Controller
+{ 
+    const Tenant = 1;
+    const Property_Manager = 3;
+    const Property_Description_Experts = 4;
+    const Legal_Advisor = 5;
+    const Visit_Organizer = 6;
+    private $_api_context;
+    public function __construct() {
+        $this->middleware('auth');
+        $paypal_conf = \Config::get('paypal');
+        $this->_api_context = new ApiContext(new OAuthTokenCredential($paypal_conf['client_id'], $paypal_conf['secret']));
+        $this->_api_context->setConfig($paypal_conf['settings']);
+    }
+
+    //Create Contract View page
+    public function createContractView(){
+        $units = PropertiesUnit::where('user_id', \Auth::user()->id)->get();
+        $tenants = DB::table('users')->where('user_role', self::Tenant)->get();
+        return view('contracts.create-contract')->with([
+            'units' => $units,
+            'tenants' => $tenants,
+        ]); 
+    }
+
+    //List of Contract for PO
+    public function ContractList(){
+        $unitArray = [];
+        $units = PropertiesUnit::select('id')->where('user_id', \Auth::user()->id)->get();
+        foreach ($units as $key => $value) {
+            $unitArray[] =  $value->id; 
+        }
+        $bookings = DB::table('unit_booking')
+            ->join('property_units', 'property_units.id', '=', 'unit_booking.unit_id')
+            ->select('unit_booking.*', 'property_units.unit_name')
+            ->whereIn('unit_booking.unit_id',$unitArray)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        //$bookings = Booking::whereIn('unit_id',$unitArray)->orderBy('start_date', 'desc')->paginate(5);
+        return view('contracts.Contract-list')->with([
+            'bookings' => $bookings,
+        ]); 
+    }
+
+    //For Contract Detail Page
+    public function contractDetails($id){
+        $contract = Booking::find($id);
+        $unit = PropertiesUnit::find( $Booking->unit_id );
+        $tenant = User::find( $Booking->tenant_id );
+        $propertyManager = User::find( $Booking->pm_id );
+        return view('contracts.contractdetails')->with([
+            'contract' => $contract,
+            'unit' => $unit,
+            'tenant' => $tenant,
+            'propertyManager' => $propertyManager,
+        ]); 
+    } 
+
+    //Create contract Post function
+    public function createContract(Request $request){
+        $request->validate([
+            //step 1
+            'user_id' => ['required'],
+            'Unit_id' => ['required'],
+            'contract_type' => ['required'],
+            'contract_communication_language' => ['required'],
+            //step 2
+            'tenant_id' => ['required'],
+            //step 3
+            'description_expert_id' => ['required'],
+            //step 4
+            'signature_date' => ['required'],
+            'start_date' => ['required'],
+            'end_date' => ['required'],
+            //step 5
+            'rent' => ['required'],
+            'cost_provision' => ['required'],
+            'fixed_charges' => ['required'],
+            'property_tax' => ['required'],
+            'deposit_amount' => ['required'],
+            'contract_time' => ['required'],
+
+        ]);
+        // $contract = new Contracts;
+        // $contract->user_id = $request->input('user_id');
+        // $contract->Unit_id = $request->input('Unit_id');
+        // $contract->contract_type = $request->input('contract_type');
+        // $contract->contract_communication_language = $request->input('contract_communication_language');
+        // $contract->tenent_id = $request->input('tenant_id');
+        // $contract->description_expert_id = $request->input('description_expert_id');
+        // $contract->signature_date = $request->input('signature_date');
+        // $contract->starting_date = $request->input('start_date');
+        // $contract->end_date = $request->input('end_date');
+        // $contract->rent = $request->input('rent');
+        // $contract->cost_provision = $request->input('cost_provision');
+        // $contract->fixed_charges = $request->input('fixed_charges');
+        // $contract->property_tax = $request->input('property_tax');
+        // $contract->deposit_amount = $request->input('deposit_amount');
+        // $contract->contract_time = $request->input('contract_time');
+        //$contract->save();
+
+        $total_amount = $request->input('rent') + $request->input('cost_provision') + $request->input('fixed_charges') + $request->input('property_tax') + $request->input('deposit_amount');
+        $unit = PropertiesUnit::where(['id' => $request->input('Unit_id') ])->first();
+        $Booking = new Booking;
+        $Booking->unit_id = $request->input('Unit_id');
+        $Booking->tenant_id = $request->input('tenant_id');
+        $Booking->guarantor_id = $request->input('user_id');
+        $Booking->pde_id = $unit->description_expert_id;
+        $Booking->vo_id = $unit->property_visit_organizer_id;
+        $Booking->pm_id = $unit->property_manager_id;
+        $Booking->contract_type = $request->input('contract_type');
+        $Booking->signature_date = $request->input('signature_date');
+        $Booking->start_date = $request->input('start_date');
+        $Booking->end_date = $request->input('end_date');
+        $Booking->total_amount = $total_amount;
+        $Booking->payment_method = $request->input('payment_method');
+        $Booking->status = 'draft';
+        $Booking->payment_status = 'pending';
+        $Booking->contract_communication_language = $request->input('contract_communication_language');
+        $Booking->rent = $request->input('rent');
+        $Booking->cost_provision = $request->input('cost_provision');
+        $Booking->fixed_charges = $request->input('fixed_charges');
+        $Booking->property_tax = $request->input('property_tax');
+        $Booking->deposit_amount = $request->input('deposit_amount');
+        $Booking->contract_time = $request->input('contract_time');
+        $Booking->save();
+
+        if($request->input('payment_method') == 'paypal'){
+            $bookingInfo = [  'id'=>$Booking->id ];
+            $request->session()->put('bookingInfo', $bookingInfo);
+            $payer = new Payer();
+            $payer->setPaymentMethod('paypal');
+
+            $item_1 = new Item();
+            $item_1->setName('Contract ID:1') ->setCurrency('USD') ->setQuantity(1) ->setPrice($total_amount); 
+
+            $item_list = new ItemList();
+            $item_list->setItems(array($item_1));
+
+            $amount = new Amount();
+            $amount->setCurrency('USD') ->setTotal($total_amount);
+
+            $transaction = new Transaction();
+            $transaction->setAmount($amount) ->setItemList($item_list) ->setDescription('Your transaction description');
+
+            $redirect_urls = new RedirectUrls();
+            $redirect_urls->setReturnUrl(URL::route('payment.contract.status')) ->setCancelUrl(URL::route('payment.contract.status'));
+
+            $payment = new Payment();
+            $payment->setIntent('Sale')
+                ->setPayer($payer)
+                ->setRedirectUrls($redirect_urls)
+                ->setTransactions(array($transaction));           
+            try {
+                $payment->create($this->_api_context);
+            } catch (\PayPal\Exception\PPConnectionException $ex) {
+                if (\Config::get('app.debug')) {
+                    \Session::put('error','Connection timeout');
+                    return redirect('/purchasemembership');
+                } else {
+                    \Session::put('error','Some error occur, sorry for inconvenient');
+                    return redirect('/purchasemembership');
+                }
+            }
+            foreach($payment->getLinks() as $link) {
+                if($link->getRel() == 'approval_url') {
+                    $redirect_url = $link->getHref();
+                    break;
+                }
+            }
+
+            Session::put('paypal_payment_id', $payment->getId());
+            if(isset($redirect_url)) {
+                return Redirect::away($redirect_url);
+            }
+        } else {
+            $unit = PropertiesUnit::find( $Booking->unit_id );
+            $tenant = User::find( $Booking->tenant_id );
+            $pm = User::find( $Booking->pm_id );
+            $pm_name      = $pm->name." ".$pm->last_name;
+            $pm_email     = $pm->email;
+            $pm_data = array(
+                'name'      => $tenant->name." ".$tenant->last_name,
+               // "email"     => 'malkeetvisionvivante@gmail.com',
+                "unit_name" => $unit->unit_name,
+                "description" => $unit->description,
+                "price"  => $Booking->total_amount,
+                "payment_method" => $Booking->payment_method,
+                "contract_status" => 'draft',
+            );
+            Mail::send('emails.contract_confirmation', $pm_data, function($message) use ($pm_name, $pm_email) {
+                $message->to($pm_email, $pm_name)
+                        ->subject('Contract Confirmation');
+                $message->from('amitpunjvision@gmail.com','Reasy Property');
+            });
+            toastr()->success('Contract Created Successfully!');
+            return back();
+        }
+    }
+
+
+    public function getPaymentStatus(Request $request){
+        $payment_id = Session::get('paypal_payment_id');
+        $postData = Input::all();
+        Session::forget('paypal_payment_id');
+        if (empty(Input::get('PayerID')) || empty(Input::get('token'))) {
+            \Session::put('error','Payment failed');
+            toastr()->error('Something Went Wrong!');
+            return redirect('/create-contract');
+        }
+        $payment = Payment::get($payment_id, $this->_api_context);
+        $execution = new PaymentExecution();
+        $execution->setPayerId(Input::get('PayerID'));
+        $result = $payment->execute($execution, $this->_api_context);
+        if ($result->getState() == 'approved') { 
+
+            //Change Booking Status
+            $bookingInfo = $request->session()->get('bookingInfo');
+            $transactions = $result->getTransactions();
+            $Booking = Booking::find($bookingInfo['id']);
+            $Booking->payment_status = "paid";
+            $Booking->save();
+
+            //Add Transaction
+            $transaction = new Transactions();
+            $transaction->paypal_id = $postData['paymentId'];
+            $transaction->paypal_PayerID = $postData['PayerID'];
+            $transaction->paypal_status = 'paid';
+            $transaction->contract_id = $bookingInfo['id'];
+            $transaction->save();
+
+
+            $unit = PropertiesUnit::find( $Booking->unit_id );
+            $tenant = User::find( $Booking->tenant_id );
+            $pm = User::find( $Booking->pm_id );
+            //Add Transaction
+            $transaction = new Transactions();
+            $transaction->paypal_id = $postData['paymentId'];
+            $transaction->paypal_PayerID = $postData['PayerID'];
+            $transaction->paypal_status = 'paid';
+            $transaction->contract_id = $bookingInfo['id'];
+            $transaction->save();
+            $pm_name      = $pm->name." ".$pm->last_name;
+            $pm_email     = $pm->email;
+            $pm_data = array(
+                'name'      => $tenant->name." ".$tenant->last_name,
+               // "email"     => 'malkeetvisionvivante@gmail.com',
+                "unit_name" => $unit->unit_name,
+                "description" => $unit->description,
+                "price"  => $Booking->total_amount,
+                "payment_method" => $Booking->payment_method,
+                "contract_status" => 'draft',
+            );
+            Mail::send('emails.contract_confirmation', $pm_data, function($message) use ($pm_name, $pm_email) {
+                $message->to($pm_email, $pm_name)
+                        ->subject('Contract Confirmation');
+                $message->from('amitpunjvision@gmail.com','Reasy Property');
+            });
+
+            toastr()->success('Contract Create Successfully!');
+            return redirect('/create-contract');
+        } else {
+            toastr()->success('Something Went Wrong!');
+            return redirect('/create-contract');
+        }
+    }
+
+    //Ajax email varification
+    public function verifyEmail(Request $request){
+        $users = User::where(['email' => $request->input('email') ])->first();
+        if(!empty($users) && $users ) {
+            return response()->json(['message'=>'Allready Exist!','status' => 'true']);
+        } else {
+            return response()->json(['message'=>'available','status' => 'false']);
+        }
+    }
+
+    //Ajax Contract data
+    public function contractExtertData(Request $request){
+        $user = User::where(['id' => $request->expert_id ])->first();
+        $unit = PropertiesUnit::where(['id' => $request->unit_id ])->first();
+        return response()->json(
+            ['id'=>$user->id,
+            'name' => $user->name." ".$user->last_name,
+            'rent' => $unit->rent,
+            'deposit_amount' => $unit->deposit,
+            'cost_provision' => $unit->cost_provision,
+            ]);
+    }
+
+    // Create contract User
+    public function contractUser(Request $request){
+        $data = $request->all('data');
+        parse_str($data['data'], $data);
+        $users = User::where(['email' => $data['email'] ])->first();
+        if(empty($users)){
+            $password = rand();
+            $user = new User;
+            $user->name = $data['name'];
+            $user->last_name = $data['last_name'];
+            $user->gender = $data['gender'];
+            $user->email = $data['email'];
+            $user->phone_no = $data['phone_number'];
+            $user->tenant_address = $data['address'];
+            $user->password = Hash::make($password);
+            $user->user_role     = "1";
+            $user->save();
+            $tenant_id = $user->id;
+            /************************/
+            $to_name = $data['name']." ".$data['last_name'];
+            $to_email = $data['email'];
+            $data1 = array(
+                'name'=>$data['name']." ".$data['last_name'],
+                "email" => $data['email'],
+                "password" => $password,
+            );
+                
+            Mail::send('emails.welcome', $data1, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)
+                        ->subject('Welcome Email from Reasy Properties');
+                $message->from('amitpunjvision@gmail.com','Reasy Property');
+            });
+            return response()->json(['status'=>'true','id' => $user->id, 'name' => ($data['name']." ".$data['last_name']) ]);
+        } else {
+            return response()->json(['status'=>'false']);
+        }
+    }
+
+    //Create contract company
+    public function contractCompany(Request $request){
+        $data = $request->all('data');
+        parse_str($data['data'], $data);
+        $users = User::where(['email' => $data['email'] ])->first();
+        if(empty($users)){
+            $password = rand();
+            $user = new User;
+            $user->company_name = $data['company_name'];
+            $user->company_phone = $data['company_phone_no'];
+            $user->company_email = $data['company_email'];
+
+            $user->name = $data['name'];
+            $user->last_name = $data['last_name'];
+            $user->gender = $data['gender'];
+            $user->email = $data['email'];
+            $user->phone_no = $data['phone_number'];
+            $user->tenant_address = $data['address'];
+            $user->password = Hash::make($password);
+            $user->user_role     = "1";
+            $user->save();
+            $tenant_id = $user->id;
+            /************************/
+            $to_name = $data['name']." ".$data['last_name'];
+            $to_email = $data['email'];
+            $data1 = array(
+                'name'=>$data['name']." ".$data['last_name'],
+                "email" => $data['email'],
+                "password" => $password,
+            );
+                
+            Mail::send('emails.welcome', $data1, function($message) use ($to_name, $to_email) {
+                $message->to($to_email, $to_name)
+                        ->subject('Welcome Email from Reasy Properties');
+                $message->from('amitpunjvision@gmail.com','Reasy Property');
+            });
+            return response()->json(['status'=>'true','id' => $user->id, 'name' => ($data['name']." ".$data['last_name']) ]);
+        } else {
+            return response()->json(['status'=>'false']);
+        }
+    }
+}

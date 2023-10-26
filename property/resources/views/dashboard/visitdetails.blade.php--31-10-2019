@@ -1,0 +1,103 @@
+@section('title','Appointment Details')
+@extends('layouts.app')
+@section('content')
+@include('layouts.banner', ['banner_text' => 'Appointment Details'])
+    <div class="container bootom-space">
+        <div class="row">
+            <div class="col-md-12">
+                @if(session()->has('message'))
+                    <div class="alert alert-success">
+                        {{ session()->get('message') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                        {!! implode('', $errors->all('<div class="error-message">:message</div>')) !!}
+                @endif
+                <div class="row">
+                    <div class="col-sm-8">
+                        <table class="table table-hover table-striped table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td class="unit" ><span><strong>Tenant Name : </span></strong></td>
+                                    <td>Jhon </td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Email : </span></strong></td>
+                                    <td>test@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Phone No. : </span></strong></td>
+                                    <td>7707907474 </td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Address : </span></strong></td>
+                                    <td>MDC Sec 5, Panchkula, Haryana, India 136118</td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Date : </span></strong></td>
+                                    <td>07 August, 2019 - 08:25 am</td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Title : </span></strong></td>
+                                    <td>Lorem Ipsum is simply dummy text of the printing and typesetting industry</td>
+                                </tr>
+                                <tr>
+                                    <td class="unit" ><span><strong>Message : </span></strong></td>
+                                    <td>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-4 float-right">
+                        <div class="add-unit-main">
+                            <a class="btn btn-success" href="{{ url()->previous() }}">Back</a>
+                        </div>
+                    </div>
+                </div>                                     
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="Building-Units">Documents</div>
+            </div>
+            @if(Auth::user()->user_role != 1)
+            <div class="col-sm-6">
+                <div class="add-unit-main">
+                    <button style="float: right;" type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add Doc <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+            @endif
+        </div> 
+        @include('dashboard.contract-documents')
+        <div class="row">
+            <div class="col-sm-12"><div class="location_on_map">Location In Map</div></div>
+            <div class="col-sm-12">
+                <iframe src = "https://maps.google.com/maps?q=32.7764749,-79.93105120000001&hl=es;z=14&amp;output=embed" width="100%" height="500px"></iframe>
+            </div>
+        </div>
+    </div> 
+
+    <style type="text/css">
+        .error-message{color: #fff; background-color: red; padding: 5px; margin: 5px 0; }
+        .unit-body {border: 2px solid #f28401; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .unit_number {font-size: 18px; }
+        .unit-body span {font-size: 15px; font-weight: bold; }
+        .unit {padding: 5px 0; }
+        .top-nevigation {padding-bottom: 25px; }
+        ul.nav.nav-tabs {border: 0; }
+        .top-nevigation li {border: 0 !important; padding: 0 6px; }
+        .top-nevigation a {border: 0 !important; background-color: #fae4c4; color: inherit; }
+        .top-nevigation li.active a {background: #f28302; color: #fff; }
+        .unit-delete span {color: #000000bd; position: relative; float: right;     margin-left: 5px; }
+        .add-unit-main {text-align: right; margin-top: 20px;}
+        .unit-delete span {color: #000000bd; position: relative; float: right;     margin-left: 5px; }
+        .amenities-input{    width: 20px; display: inline-block; height: 20px; padding-top: 2px;}
+        .container.bootom-space {margin-bottom: 50px; }
+        .location_on_map {font-size: 24px; text-align: center; padding: 50px 0 20px; }
+        .Building-title {font-size: 24px; }
+        td.unit { width: 25%;}
+        .Building-Units {font-size: 28px; margin-top: 20px;}
+    </style>
+    
+@endsection

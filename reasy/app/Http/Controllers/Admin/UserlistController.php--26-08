@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\User;
+
+class UserlistController extends Controller {
+    
+    public function list(request $request){
+        $users = User::all();        
+    	return view('admin.listusers')->with(['users'=>$users]);
+    }
+
+    public function delete($id){
+        $cmspages = new User;
+        $cmspages->find($id)->delete();
+        return back()->with('message', 'User Deleted Successfully!');
+    }
+
+}

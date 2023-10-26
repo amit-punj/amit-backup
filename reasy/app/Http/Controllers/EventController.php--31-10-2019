@@ -1,0 +1,97 @@
+<?php
+ 
+namespace App\Http\Controllers;
+ 
+use Illuminate\Http\Request;
+use Auth;
+use App\Http\Requests;
+use Calendar;
+use App\EventModel;
+// use MaddHatter\LaravelFullcalendar\Event;
+use App\Event;
+use Illuminate\Support\Str;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\User;
+use Illuminate\Support\Facades\Input;
+ 
+class EventController extends Controller
+{
+    public function index()
+    {
+        $events = [];
+        $data = Event::all();   
+        if($data->count()) {
+            // if(Auth::user()->user_role == 4){
+            //     $array = array('#349a6e','#82a21c;');
+            // }
+            // else{
+            //     $array = array('#349a6e');
+            // }
+            foreach ($data as $key => $value) {
+                if(Auth::user()->user_role == 4 && $key == 1){
+                    $k = '#82a21c;';
+                }
+                else{
+                    $k = '#349a6e;';
+                }
+                $events[] = Calendar::event(
+                    $value->title,
+                    true,
+                    new \DateTime($value->start_date),
+                    new \DateTime($value->end_date.' +1 day'),
+                    null,
+                    // Add color and link on event
+                    [
+                        'color' => $k,
+                        'url' => 'visit-details/5',
+                    ]
+                );
+            }
+        }
+
+        $calendar = \Calendar::addEvents($events)
+                ->setCallbacks([ 
+                    'dayRender' => 'function(date, cell) {
+                        var today = $.fullCalendar.moment();
+                        var end = $.fullCalendar.moment().add(3, "days");
+                        var holiday = $.fullCalendar.moment().add(8, "days");
+                        var holiday1 = $.fullCalendar.moment().add(13, "days");
+                        if (date.get("date") == today.get("date")) {
+                            // cell.css("background", "#e8e8e8");
+                        }
+                        if(date.get("date") > today.get("date") && date.get("date") <= end.get("date")) {
+                            cell.css("background-color", "#ce558a47");
+                        }
+                        if(date.get("date") ==  holiday.get("date") ) {
+                            cell.css("background-color", "#f6e588");
+                        }
+                        if(date.get("date")  == holiday1.get("date") ) {
+                            cell.css("background-color", "#f6e588");
+                        }
+                    }'
+                ]);
+        return view('events.index', compact('calendar','data'));
+    }
+ 
+    public function create(Request $request)
+    {
+        if($request->isMethod('post'))
+        {
+            $postData = Input::all();
+            // echo "<pre>";
+            // print_r($postData);
+            // die('dfddd');
+            return redirect('my-calender');
+        }
+        return view('events.add-availability');
+    }
+ 
+    public function view($id)
+    {
+ 
+    }
+}
+ 
+        

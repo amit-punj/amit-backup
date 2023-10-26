@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use App\Properties;
+use App\Meters;
+use App\MeterReadings;
+use App\Contracts;
+use App\PropertiesUnit;
+use App\Vendors;
+Use Helper;
+use Illuminate\Support\Facades\DB;
+class ContractController extends Controller
+{ 
+    const Tenant = 1;
+    const Property_Manager = 3;
+    const Property_Description_Experts = 4;
+    const Legal_Advisor = 5;
+    const Visit_Organizer = 6;
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function create_contract(){
+        $units = PropertiesUnit::where('user_id', \Auth::user()->id)->get();
+        //$PropertyDescriptionExperts = DB::table('users')->where('user_role', self::Property_Description_Experts)->get();
+        $tenants = DB::table('users')->where('user_role', self::Tenant)->get();
+        //$VisitOrganizers = DB::table('users')->where('user_role', self::Visit_Organizer)->get();
+        return view('create-contract')->with([
+            'units' => $units,
+            'tenants' => $tenants
+        ]); 
+    }
+
+}

@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use Validator;
+use URL;
+use Session;
+use Redirect;
+use App\User;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Hash;
+use App\MembershipPayments;
+use Illuminate\Support\Facades\DB;
+use App\Plans;
+use Auth;
+use Carbon\Carbon;
+class DashboardController extends HomeController {
+  
+    public function __construct(){
+       $this->middleware('auth');
+    }
+    /**
+     * Show the application paywith paypalpage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //1-Tenant, 2-Property Owner, 3-Property Manager, 4-Property Description Experts, 5-Legal Advisor, 6- Visit Organizer
+    public function view(){
+        if(Auth::user()->user_role == 1){
+           return view('userDashboard.tenant_dashboard');
+        }
+        if(Auth::user()->user_role == 2){
+           return view('userDashboard.po_dashboard');
+        }
+        if(Auth::user()->user_role == 3){
+           return view('userDashboard.pm_dashboard');
+        }
+        if(Auth::user()->user_role == 4){
+           return view('userDashboard.p_description_e_dashboard');
+        }
+        if(Auth::user()->user_role == 5){
+           return view('userDashboard.legal_adviser_dashboard');
+        }
+        if(Auth::user()->user_role == 6){
+           return view('userDashboard.visit_organiger_dashboard');
+        }
+    }
+    
+}
